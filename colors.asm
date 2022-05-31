@@ -1,5 +1,5 @@
 
-; multicolor
+; ZX multicolor 64x48
 PORCH   equ 64-3
 
         org  0x5ccb
@@ -41,14 +41,14 @@ BORDER macro color
         out (254),a
 endm
 
-WAIT_VISIBLE_LINE macro line
+WAIT_RASTER macro line
  rept (224*(PORCH+line)-96-t($)-t(x))/4
         nop
  endm
 endm
 
-    BORDER 1
-    WAIT_VISIBLE_LINE -4
+    	BORDER 1
+   	WAIT_RASTER -4
         BORDER 2
 
 pixels____________________________
@@ -61,7 +61,7 @@ endm
 
 LINE macro attr_offset, line
     	ld sp,$5800+attr_offset
-        WAIT_VISIBLE_LINE line
+        WAIT_RASTER line
     	LINEZ
 endm
 

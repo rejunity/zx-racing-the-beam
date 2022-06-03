@@ -18,7 +18,7 @@ screen_loop
         ld sp, hl
         ld hl, (cnt)
         
-        ld b,128
+        ld b, 196
 
 inner_loop
         push hl

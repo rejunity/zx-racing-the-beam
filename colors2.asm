@@ -1,15 +1,12 @@
-
-        
-
-; multicolor based on Nirvana+ loop
+; ZX multicolor based on Nirvana+ loop
 ; https://worldofspectrum.org/forums/discussion/comment/768319#Comment_768319
 ; https://worldofspectrum.org/forums/discussion/38591/redirect/p1
 ; 64x48 multicolor in demo - https://www.pouet.net/prod.php?which=62802
 PORCH   equ 64-3
 
         org  0x5ccb
-        jmp  0x8000        
-	org  0x8000
+        jmp  0x8000
+        org  0x8000
         
 init_______________________________
         ld bc,$0018

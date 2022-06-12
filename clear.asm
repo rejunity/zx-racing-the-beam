@@ -1,7 +1,9 @@
-; ZX clear with stack
-; Valdemar version
-        org  0x5ccb
-        jmp  0x8000
+; ZX48K clear with stack (Valdemar version)
+
+; To compile with zmac or pasmo:
+; a) zmac clear.asm -o clear-zmac.tap
+; b) pasmo --tapbas clear.asm clear-pasmo.tap
+
         org  0x8000
 
 screen_loop
@@ -50,11 +52,8 @@ inner_loop
         out (254),a
         
         jp screen_loop
-        
-cnt     dw 0x0030
 
 
-        org 0xff57
-        defb 00h
+cnt     dw 0x0000
 
-
+        end screen_loop         ; entry point for zmac and pasmo

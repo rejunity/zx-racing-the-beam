@@ -1,6 +1,9 @@
-; ZX fill with stack, preshift
-        org  0x5ccb
-        jmp  0x8000
+; ZX48K fill screen with preshifted values using stack
+
+; To compile with zmac or pasmo:
+; a) zmac vscroll.asm -o vscroll-zmac.tap
+; b) pasmo --tapbas vscroll.asm vscroll-pasmo.tap
+
         org  0x8000
         
 screen_loop
@@ -106,6 +109,4 @@ src     dw 0xaaaa
 
 stack   dw 0
 
-        org 0xff57
-        defb 00h
-
+        end screen_loop         ; entry point for zmac and pasmo

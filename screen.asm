@@ -1,9 +1,12 @@
-; ZX fill with pixels, data interleaved with code
+; ZX48K fill screen with pixels, data interleaved with code
 ; too slow to fill all 196 lines due to VRAM contention:
 ; 1) use more registers and move pushes into the border
 ; 2) even without contention the line is 1.5 times slower than raster line, would have to reuse the pixel data per line to make it fast enough
-        org  0x5ccb
-        jmp  0x8000
+
+; To compile with zmac or pasmo:
+; a) zmac screen.asm -o screen-zmac.tap
+; b) pasmo --tapbas screen.asm screen-pasmo.tap
+
         org  0x8000
 
 screen_loop
@@ -71,8 +74,4 @@ inner_loop
         
 cnt     dw 0x0030
 
-
-        org 0xff57
-        defb 00h
-
-
+        end screen_loop         ; entry point for zmac and pasmo

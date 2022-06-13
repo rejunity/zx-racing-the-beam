@@ -1,10 +1,12 @@
-; ZX multicolor 64x48
+; ZX48K multicolor 64x48
+; zmac colors.asm -o colors.tap
+
+
 PORCH   equ 64-3
 
-        org  0x5ccb
-        jmp  0x8000
         org  0x8000
-        
+
+start
 init_______________________________
         ld bc,$0018
         ld a,11110000b
@@ -121,6 +123,4 @@ endm
 data    dw 0x8880
 stack   dw 0
 
-        org 0xff57
-        defb 00h
-
+        end start               ; entry point for zmac and pasmo

@@ -8,25 +8,14 @@ TAPES=clear.tap screen.tap vscroll.tap colors.tap colors2.tap
 # rules
 .PHONY: all clean
 all: $(TAPES)
+
 clean:
 	rm -f $(TAPES)
 
+# compile asm to tape
 %.tap: %.asm
 	$(AS) $< -o $@
 
-
-# build and run
-clear: clear.tap
-	$(EMU) $^
-
-screen: screen.tap
-	$(EMU) $^
-
-vscroll: vscroll.tap
-	$(EMU) $^
-
-colors: colors.tap
-	$(EMU) $^
-
-colors2: colors2.tap
+# run tape with emu
+%: %.tap
 	$(EMU) $^

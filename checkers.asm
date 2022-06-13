@@ -17,7 +17,6 @@ start
 init_______________________________
 
 screen_loop
-
         ei
         halt
 frame   di
@@ -26,18 +25,14 @@ frame   di
         ld h, 1
         ld l, 6
         ld bc, $fe
-        
-top_border_________________________
-BORDER macro color
-        ld a,color
-        out (254),a
-endm
 
 WAIT_RASTER macro line
  rept (224*(PORCH+line)-t($)-t(frame)+4)/4
         nop
  endm
 endm
+
+top_border_________________________
         WAIT_RASTER -24
 
  rept 12

@@ -3,7 +3,7 @@ AS=~/speccy/zmac
 EMU=open ~/speccy/Fuse.emu/Fuse.app
 
 # targets
-TAPES=clear.tap screen.tap vscroll.tap colors.tap colors2.tap
+TAPES=clear.tap screen.tap vscroll.tap checkers.tap colors.tap colors2.tap
 
 # rules
 .PHONY: all clean

@@ -27,7 +27,7 @@ frame   di
         ld bc, $fe
 
 WAIT_RASTER macro line
- rept (224*(PORCH+line)-t($)-t(frame)+4)/4
+ rept (224*(PORCH+line)-24-t($)-t(frame)+4)/4
         nop
  endm
 endm

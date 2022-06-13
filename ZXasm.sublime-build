@@ -1,0 +1,4 @@
+{
+    "selector": "source.asm",
+    "cmd": ["make", "$file_base_name"]
+}

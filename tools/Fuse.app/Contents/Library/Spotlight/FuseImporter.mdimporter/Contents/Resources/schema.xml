@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<schema version="1.0" xmlns="http://www.apple.com/metadata"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://www.apple.com/metadata file:///System/Library/Frameworks/CoreServices.framework/Frameworks/Metadata.framework/Resources/MetadataSchema.xsd">
+
+	<attributes>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Category" multivalued="false" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Price" multivalued="false" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Loader" multivalued="false" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Origin" multivalued="false" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Machines" multivalued="true" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_Peripherals" multivalued="true" type="CFString"/>
+        <attribute name="net_sourceforge_projects_fuse_emulator_GraphicsMode" multivalued="false" type="CFString"/>
+    </attributes>
+	<note>
+		Schema for additional attributes supplied by the Fuse importer.
+	</note>
+
+    <types>
+        <type name="net.sourceforge.projects.fuse-emulator.tzx">
+            <allattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </allattrs>
+            <displayattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </displayattrs> 
+            <previewattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </previewattrs> 
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.pzx">
+            <allattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </allattrs>
+            <displayattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </displayattrs> 
+            <previewattrs>
+				net_sourceforge_projects_fuse_emulator_Category
+				net_sourceforge_projects_fuse_emulator_Price
+				net_sourceforge_projects_fuse_emulator_Loader
+				net_sourceforge_projects_fuse_emulator_Origin
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </previewattrs> 
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.Snapshot">
+            <allattrs>
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </allattrs>
+            <displayattrs>
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </displayattrs> 
+            <previewattrs>
+				net_sourceforge_projects_fuse_emulator_Machines
+				net_sourceforge_projects_fuse_emulator_Peripherals
+            </previewattrs> 
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.scr">
+            <allattrs>
+				net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </allattrs>
+            <displayattrs>
+				net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </displayattrs> 
+            <previewattrs>
+				net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </previewattrs> 
+        </type>
+        <type name="net.sourceforge.projects.fuse-emulator.mlt">
+            <allattrs>
+                net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </allattrs>
+            <displayattrs>
+                net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </displayattrs>
+            <previewattrs>
+                net_sourceforge_projects_fuse_emulator_GraphicsMode
+            </previewattrs>
+        </type>
+    </types>
+</schema>

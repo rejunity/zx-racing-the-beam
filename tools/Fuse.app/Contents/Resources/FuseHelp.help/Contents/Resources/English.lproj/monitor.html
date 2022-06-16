@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width initial-scale=1"/>
+	<title>Monitor/Debugger</title>
+	
+	<meta name="description" content="This section describes the Fuse machine code monitor and debugger."/>
+	
+	
+	<link rel="stylesheet" href="../css/main.css"/>
+	
+	<script src="../nav.js"></script>
+	
+</head>
+
+	<body class="help-page">
+		<header class="banner">
+	
+	<nav id="menu" class="dynamic">
+		
+		
+		<ul>
+		
+			
+				
+				<li>
+					<a href="../English.lproj/changelog.html"><nav>What's New In Fuse?</nav></a>
+				</li>
+				
+			
+		
+			
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/about.html"><nav>About Fuse</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/menus.html"><nav>Menus And Keys</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li class="group">
+					<a name="name"><nav>Fuse Preferences</nav></a>
+					<ul name="list">
+					
+						<li>
+							<a href="../English.lproj/topic-1.html"><nav>Setting Fuse Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/general.html"><nav>General Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/sound.html"><nav>Sound Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/peripherals.html"><nav>Peripherals Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/graphics_filter.html"><nav>Video Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/rzx.html"><nav>Recording Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/joysticks.html"><nav>Inputs Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/roms.html"><nav>ROM Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/machine.html"><nav>Machine Preferences</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/filters.html"><nav>Graphics Filters</nav></a>
+						</li>
+					
+					</ul>
+				</li>
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/mappings.html"><nav>Key Mappings</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/emulation.html"><nav>The Emulated Spectrum</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li class="group">
+					<a name="name"><nav>Floppy Disk Interfaces</nav></a>
+					<ul name="list">
+					
+						<li>
+							<a href="../English.lproj/topic-2.html"><nav>Floppy Disk Interfaces</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/trdos.html"><nav>Beta 128 Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/didaktik80.html"><nav>Didaktik 80 Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/plusd.html"><nav>+D Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/disciple.html"><nav>DISCiPLE Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/opus.html"><nav>Opus Discovery Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/formats.html"><nav>Disk Formats</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/dsk.html"><nav>The .DSK Format</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/weak.html"><nav>Weak Disk Data</nav></a>
+						</li>
+					
+					</ul>
+				</li>
+			
+		
+			
+				
+				<li class="group">
+					<a name="name"><nav>Hard Disk Interfaces</nav></a>
+					<ul name="list">
+					
+						<li>
+							<a href="../English.lproj/topic-3.html"><nav>Hard Disk Interfaces</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/divide.html"><nav>DivIDE Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/divmmc.html"><nav>DivMMC Emulation</nav></a>
+						</li>
+					
+						<li>
+							<a href="../English.lproj/zxatasp.html"><nav>ZXATASP and ZXCF</nav></a>
+						</li>
+					
+					</ul>
+				</li>
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/printer.html"><nav>Printer Emulation</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/spectranet.html"><nav>Spectranet Emulation</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li class="active">
+					<a href="../English.lproj/monitor.html"><nav>Monitor/Debugger</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/pokefinder.html"><nav>The Poke Finder</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/pokememory.html"><nav>POKEs/Cheats</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/compressed.html"><nav>Compressed Files</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/movies.html"><nav>Movie Recording</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/spotlight.html"><nav>Spotlight Importer</nav></a>
+				</li>
+				
+			
+		
+			
+				
+				<li>
+					<a href="../English.lproj/quicklook.html"><nav>Quick Look Generator</nav></a>
+				</li>
+				
+			
+		
+		</ul>
+	</nav>
+</header>
+
+		<main>
+			<h1>Monitor/Debugger</h1>
+
+<p>Fuse features a moderately powerful, completely transparent monitor/debugger,
+which can be activated via the <em>Machine &gt; Debugger…</em> menu option. A debugger
+window will appear, showing the current state of the emulated machine: the
+top-left ‘pane’ shows the current state of the Z80 and the last bytes written to
+any emulated peripherals. The bottom-left pane lists any active breakpoints.
+Moving right, the next pane shows a disassembly, which by default starts at the
+current program counter, although this can be modified either by the
+‘disassemble’ command (see below) or by dragging the scrollbar next to it. The
+next pane shows the current stack, and the next pane has any ‘events’ which are
+due to occur and could affect emulation. Below the events pane is the Spectrum’s
+64K memory map (the W? and C? indicate whether each displayed chunk is writable
+or contended respectively). Fuse tracks the memory mapping of the overall
+address space in 2KB chunks but will summarise the mapped pages where they are
+part of the same page of the underlying memory source (e.g. 8KB page sizes in
+the Spectrum 128K and 4KB pages in the Timex clones’ DOCK and EXROM banks).
+Below the displays are an entry box for debugger commands, and five buttons for
+controlling the debugger:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">BUTTON</th>
+      <th style="text-align: left">DESCRIPTION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><em>Evaluate</em></td>
+      <td style="text-align: left">Evaluate the command currently in the entry box.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>Single</em></td>
+      <td style="text-align: left">Step Run precisely one Z80 opcode and then stop emulation again.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>Continue</em></td>
+      <td style="text-align: left">Restart emulation, but leave the debugger window open. Note that the debugger window will not be updated while emulation is running.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>Break</em></td>
+      <td style="text-align: left">Stop emulation and return to the debugger.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>Close</em></td>
+      <td style="text-align: left">Close the debugger window and restart emulation.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+Double-clicking on an entry in the stack pane will cause emulation to run until
+the program counter reaches the value stored at that address, while
+double-clicking on an entry in the ‘events’ pane will cause emulation to run
+until that time is reached.</p>
+
+<p>The main power of the debugger is via the commands entered into the entry box,
+which are similar in nature (but definitely not identical to or as powerful as)
+to those in the gdb debugger. In general, the debugger is case-insensitive, and
+numbers will be interpreted as decimal, unless prefixed by either ‘0x’ or ‘$’
+when they will be interpreted as hex. Each command can be abbreviated to the
+portion not in curly braces.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">COMMAND</th>
+      <th style="text-align: left">DESCRIPTION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><em>ba{se} number</em></td>
+      <td style="text-align: left">Change the debugger window to displaying output in base number. Available values are 10 (decimal) or 16 (hex).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>br{eakpoint} [address] [if condition]</em></td>
+      <td style="text-align: left">Set a breakpoint to stop emulation and return to the debugger whenever an opcode is executed at address and condition evaluates true. If address is omitted, it defaults to the current value of PC.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">br{eakpoint} p{ort} (re{ad}|w{rite}) port [if condition]</td>
+      <td style="text-align: left">Set a breakpoint to trigger whenever IO port port is read from or written to and condition evaluates true.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">br{eakpoint} (re{ad}|w{rite}) [address] [if condition]</td>
+      <td style="text-align: left">Set a breakpoint to trigger whenever memory location address is read from (other than via an opcode fetch) or written to and condition evaluates true. Address again defaults to the current value of PC if omitted.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>br{eakpoint} ti{me} time [if condition]</em></td>
+      <td style="text-align: left">Set a breakpoint to occur time tstates after the start of every frame, assuming condition evaluates true (if one is given).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>br{eakpoint} ev{ent} area:detail [if condition]</em></td>
+      <td style="text-align: left">Set a breakpoint to occur when the event specified by area detail occurs and condition evaluates to true. The events which can be caught are listed below.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>cl{ear} [address]</em></td>
+      <td style="text-align: left">Remove all breakpoints at address or the current value of PC if address is omitted. Port read/write breakpoints are unaffected.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>cond{ition} id [condition]</em></td>
+      <td style="text-align: left">Set breakpoint id to trigger only when condition is true, or unconditionally if condition is omitted.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>co{ntinue}</em></td>
+      <td style="text-align: left">Equivalent to the Continue button.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>del{ete} [id]</em></td>
+      <td style="text-align: left">Remove breakpoint id, or all breakpoints if id is omitted.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>di{sassemble} address</em></td>
+      <td style="text-align: left">Set the centre panel disassembly to begin at address.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>fi{nish}</em></td>
+      <td style="text-align: left">Exit from the current CALL or equivalent. This isn’t infallible: it works by setting a temporary breakpoint at the current contents of the stack pointer, so will not function correctly if the code returns to some other point or plays with its stack in other ways. Also, setting this breakpoint doesn’t disable other breakpoints, which may trigger before this one. In that case, the temporary breakpoint remains, and the `continue’ command can be used to return to it.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>i{gnore} id count</em></td>
+      <td style="text-align: left">Do not trigger the next count times that breakpoint id would have triggered.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>n{ext}</em></td>
+      <td style="text-align: left">Step to the opcode following the current one. As with the `finish’ command, this works by setting a temporary breakpoint at the next opcode, so is not infalliable.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>o{ut} port value</em></td>
+      <td style="text-align: left">Write value to IO port port.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>se{t} address value</em></td>
+      <td style="text-align: left">Poke value into memory at address.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>se{t} $variable value</em></td>
+      <td style="text-align: left">Set the value of the debugger variable variable to value.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>se{t} area:detail value</em></td>
+      <td style="text-align: left">Set the value of the system variable area : detail to value. The available system variables are listed below.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>s{tep}</em></td>
+      <td style="text-align: left">Equivalent to the Single Step button.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>t{breakpoint} [options]</em></td>
+      <td style="text-align: left">This is the same as the <code class="highlighter-rouge">breakpoint</code> command in its various forms, except that the breakpoint is temporary: it will trigger once and once only, and then be removed.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+Addresses can be specified in one of two forms: either an absolute addresses, specifed by an integer in the range 0x0000 to 0xFFFF or as a ‘source:page:offset’ combination, which refers to a location offset bytes into the memory bank page, independent of where that bank is currently paged into memory. RAM and ROM pages are indicated, respectively, by ‘RAM’ and ‘ROM’ sources (e.g. offset 0x1234 in ROM 1 is specified as <code class="highlighter-rouge">ROM:1:0x1234</code>). Other available sources are: ‘Betadisk’, ‘“Didaktik 80 RAM”’, ‘“Didaktik 80 ROM”’, ‘“DISCiPLE RAM”’, ‘“DISCiPLE ROM”’, ‘“DivIDE EPROM”’, ‘“DivIDE RAM”’, ‘“DivMMC EPROM”’, ‘“DivMMC RAM”’, ‘If1’, ‘If2’, ‘“Multiface RAM”’, ‘“Multiface ROM”’, ‘“Opus RAM”’, ‘“Opus ROM”’, ‘PlusD RAM’, ‘PlusD ROM’, ‘SpeccyBoot’, ‘Spectranet’, ‘“Timex Dock”’, ‘“Timex EXROM”’, ‘ZXATASP’ and ‘ZXCF’.</p>
+
+<p>Please, note that spaces in memory sources should be escaped, e.g.,<code class="highlighter-rouge">break Didaktik\ 80\ ROM:0:0x1234</code>. The 48K machines are treated as having a permanent mapping of page 5 at 0x4000, page 2 at 0x8000 and page 0 at 0xC000; the 16K Spectrum is treated as having page 5 at 0x4000 and no page at 0x8000 and 0xC000.</p>
+
+<p>Anywhere the debugger is expecting a numeric value, except where it expects a breakpoint id, you can instead use a numeric expression, which uses a restricted version of C’s syntax; exactly the same syntax is used for conditional breakpoints, with ‘0’ being false and any other value being true. In numeric expressions, you can use integer constants (all calculations are done in integers), system variables, debugger variables, parentheses, the standard four numeric operations (‘+’, ‘-‘, ‘*’ and ‘/’), the (non-)equality operators ‘==’ and ‘!=’, the comparision operators ‘&gt;’, ‘&lt;’, ‘&gt;=’ and ‘&lt;=’, bitwise and (‘&amp;’), or (‘|’) and exclusive or (‘^’) and logical and (‘&amp;&amp;’) and or (‘||’).</p>
+
+<h2 id="system-events">System Events</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">EVENT</th>
+      <th style="text-align: left">DESCRIPTION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><em>beta128:page</em></td>
+      <td style="text-align: left">The Beta 128 interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>beta128:unpage</em></td>
+      <td style="text-align: left">The Beta 128 interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>didaktik80:page</em></td>
+      <td style="text-align: left">The Didaktik 80 interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>didaktik80:unpage</em></td>
+      <td style="text-align: left">The Didaktik 80 interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>disciple:page</em></td>
+      <td style="text-align: left">The DISCiPLE interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>disciple:unpage</em></td>
+      <td style="text-align: left">The DISCiPLE interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>divide:page</em></td>
+      <td style="text-align: left">The DivIDE interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>divide:unpage</em></td>
+      <td style="text-align: left">The DivIDE interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>divmmc:page</em></td>
+      <td style="text-align: left">The DivMMC interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>divmmc:unpage</em></td>
+      <td style="text-align: left">The DivMMC interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>if1:page</em></td>
+      <td style="text-align: left">The Interface 1 shadow ROM is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>if1:unpage</em></td>
+      <td style="text-align: left">The Interface 1 shadow ROM is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>multiface:page</em></td>
+      <td style="text-align: left">The Multiface One/128/3 is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>multiface:unpage</em></td>
+      <td style="text-align: left">The Multiface One/128/3 is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>opus:page</em></td>
+      <td style="text-align: left">The Opus Discovery is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>opus:unpage</em></td>
+      <td style="text-align: left">The Opus Discovery is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>plusd:page</em></td>
+      <td style="text-align: left">The +D interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>plusd:unpage</em></td>
+      <td style="text-align: left">The +D interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>speccyboot:page</em></td>
+      <td style="text-align: left">The SpeccyBoot interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>speccyboot:unpage</em></td>
+      <td style="text-align: left">The SpeccyBoot interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>spectranet:page</em></td>
+      <td style="text-align: left">The Spectranet interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>spectranet:unpage</em></td>
+      <td style="text-align: left">The Spectranet interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>rzx:end</em></td>
+      <td style="text-align: left">An RZX recording finishes playing.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>tape:play</em></td>
+      <td style="text-align: left">The emulated tape starts playing.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>tape:stop</em></td>
+      <td style="text-align: left">The emulated tape stops playing.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>zxatasp:page</em></td>
+      <td style="text-align: left">The ZXATASP interface is paged into memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>zxatasp:unpage</em></td>
+      <td style="text-align: left">The ZXATASP interface is paged out of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>zxcf:page</em></td>
+      <td style="text-align: left">The ZXCF interface is paged into of memory.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>zxcf:unpage</em></td>
+      <td style="text-align: left">The ZXCF interface is paged out of memory.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br />
+In all cases, the event can be specified as area:* to catch all events from
+that area.</p>
+
+<h2 id="system-variables">System Variables</h2>
+
+<p>System variables are specified via an ‘area:detail’ syntax. The available system variables are:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">SYSTEM VARIABLE</th>
+      <th style="text-align: left">DESCRIPTION</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><em>ay:current</em></td>
+      <td style="text-align: left">The current AY‐3‐8912 register.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>divmmc:control</em></td>
+      <td style="text-align: left">The last byte written to DivMMC control port.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>spectrum:frames</em></td>
+      <td style="text-align: left">The frame count since reset. Note that this variable can only be read, not written to.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>tape:microphone</em></td>
+      <td style="text-align: left">The current level of the tape input connected to the ‘EAR’ port. Note that this variable can only be read, not written to.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>ula:last</em></td>
+      <td style="text-align: left">The last byte written to the ULA. Note that this variable can only be read, not written to.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>ula:mem1ffd</em></td>
+      <td style="text-align: left">The last byte written to memory control port used by the ZX Spectrum +2A/3; normally addressed at 0x1ffd, hence the name.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>ula:mem7ffd</em></td>
+      <td style="text-align: left">The last byte written to primary memory control port used by the ZX Spectrum 128 and later; normally addressed at 0x7ffd, hence the name.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>ula:tstates</em></td>
+      <td style="text-align: left">The number of tstates since the last interrupt.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>z80: register name</em></td>
+      <td style="text-align: left">The value of the specified register. Both 8‐bit registers and 16‐bit register pairs are supported. The MEMPTR / WZ hidden register is also supported. The (presumable) Q hidden register is also supported.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>z80:im</em></td>
+      <td style="text-align: left">The current interrupt mode of the Z80.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>z80:iff1</em></td>
+      <td style="text-align: left">1 if the interrupt flip‐flop is currently set, or 0 if it is not set.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><em>z80:iff2</em></td>
+      <td style="text-align: left">1 if the interrupt flip‐flop is currently set, or 0 if it is not set.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+		</main>
+		
+<footer>
+</footer>
+
+	</body>
+	
+</html>

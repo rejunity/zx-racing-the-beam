@@ -1,6 +1,6 @@
 # tools
-AS=~/speccy/zmac
-EMU=open ~/speccy/Fuse.emu/Fuse.app
+AS=tools/zmac
+EMU=open tools/Fuse.app
 
 # targets
 TAPES=clear.tap screen.tap vscroll.tap checkers.tap checkers_hscroll.tap colors.tap colors2.tap

@@ -19,6 +19,37 @@ COLOR_B equ 6
 start
 init_______________________________
 
+        ld b, COLOR_A << 3
+        ld c, COLOR_A << 3
+        ld d, COLOR_B << 3
+        ld e, COLOR_B << 3
+        ld h, COLOR_B << 3
+        ld l, COLOR_A << 3
+        exx
+        ld b', COLOR_B << 3
+        ld c', COLOR_B << 3
+        ld d', COLOR_A << 3
+        ld e', COLOR_A << 3
+        ld h', COLOR_A << 3
+        ld l', COLOR_B << 3
+        exx
+
+        ld iy, 0
+        add iy, sp                  ; temporarily store SP in IY
+        ld sp, $5800+32*24
+ rept 8
+  rept 3
+   rept 5
+        push bc
+        push de
+        push hl
+   endm
+        push bc
+  endm
+        exx
+ endm
+        ld sp, iy
+
         xor a
         ld h, COLOR_A
         ld l, COLOR_B

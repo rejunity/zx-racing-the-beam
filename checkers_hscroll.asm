@@ -10,12 +10,14 @@
 ; 5) A frame is (64+192+56)*224=69888 T states (3.5MHz/69888=50.08 Hz interrupt)
 
 ;DEBUG   equ 0
-PORCH   equ 64
-PORT    equ $FE
-BRIGHT  equ 0
+BRIGHT  equ 0 ; 8 for bright
 COLOR_A equ (2+BRIGHT)
 COLOR_B equ (6+BRIGHT)
 PAUSE_N_FRAMES equ 1
+
+CLOBBER_REGPAIR_BY_WAIT equ de
+PORCH   equ 64
+PORT    equ $FE
 
         org $8000
 start:
@@ -55,9 +57,10 @@ keep_scroll_patterns:
 render_frame____________________________________________________________________
         ld sp, (stack)
         ei
-        halt            ; 39 cycles since the start of the frame
-        adc hl, bc      ; 15 cycles, used here for cycle alignment on 4: 39+15=56
-INTERRUPT_CYCLE_COUNT = 39+15
+        halt            ; 39 cycles passes since the start of the frame,
+                        ; our custom empty im2_handler executes and
+                        ; CPU finishes HALT instruction
+INTERRUPT_CYCLE_COUNT = 39
 frame   di
 
         ld (stack), sp
@@ -90,16 +93,29 @@ frame   di
         ld bc, PORT
         out (c),a
 
-CONTENDED_CYCLE_COUNT = INTERRUPT_CYCLE_COUNT
-WAIT_CYCLES macro cycles
+WAIT_CYCLES macro cycles, ?dummy_jump
  cycles_to_wait = (cycles)
- if cycles_to_wait%4!=0 && cycles_to_wait%2==0 && cycles_to_wait>=6
-        dec de
-        cycles_to_wait-=6
+ ;assert (cycles_to_wait >= 4)
+ if cycles_to_wait%4==1 && cycles_to_wait>=9
+        ld a, i         ; waste 9T
+        cycles_to_wait-=9
  endif
- if cycles_to_wait%4!=0 && cycles_to_wait%2==0 && cycles_to_wait>=6
-        inc de
+ if cycles_to_wait%4==3 && cycles_to_wait>=7
+        ld a, 1         ; waste 7T
+        cycles_to_wait-=7
+ endif
+ ifdef CLOBBER_REGPAIR_BY_WAIT
+  if cycles_to_wait%2==0 && cycles_to_wait%4!=0 && cycles_to_wait>=6
+        dec CLOBBER_REGPAIR_BY_WAIT
+                        ; waste 6T
         cycles_to_wait-=6
+  endif
+ else
+  if cycles_to_wait%2==0 && cycles_to_wait%4!=0 && cycles_to_wait>=10
+        jmp ?dummy_jump ; waste 10T
+  ?dummy_jump:
+        cycles_to_wait-=10
+  endif
  endif
  assert cycles_to_wait%4==0
  rept cycles_to_wait/4
@@ -107,6 +123,7 @@ WAIT_CYCLES macro cycles
  endm
 endm
 
+CONTENDED_CYCLE_COUNT = INTERRUPT_CYCLE_COUNT
 WAIT_SCANLINE macro line, cycles_offset
         WAIT_CYCLES 224*(PORCH+line)+(cycles_offset)-CONTENDED_CYCLE_COUNT-(t($)-t(frame))+4
 endm

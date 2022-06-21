@@ -12,104 +12,49 @@
 ;DEBUG   equ 1
 PORCH   equ 64
 PORT    equ $fe
-BRIGHT  equ 8
+BRIGHT  equ 0
 COLOR_A equ (2+BRIGHT)
 COLOR_B equ (6+BRIGHT)
+PAUSE_N_FRAMES equ 2
 
         org $8000
 
 start
-init_______________________________
+init
+        ld (stack), sp
 
-screen_loop
+        call setup_interrupt_mode2
+
+        jp update_scroll_patterns_and_jump_to_main_loop
+
+main_loop
         ld sp, (stack)
         ei
         halt                    ; 895 cycles since interrupt
-        ld a, (stack)           ; 13 cycles, used here for cycle alignment on 4: 895+13=908
-        xor a
+
+; 912;         ; initialize with the number of wasted cycles since the start of the frame
+                                        ; TODO: I found this number empirically and verified it with Fuse
+                                        ; investigate, if due to keyboard processing in ROM interrupt taking that much time?
+INTERRUPT_CYCLE_COUNT defl 39+15
+                                ; initialize with the number of wasted cycles since the start of the frame
+                                ; TODO: I found this number empirically and verified it with Fuse
+                                ; investigate, if due to keyboard processing in ROM interrupt taking that much time?
+
+        ;ld a, (stack)           ; 13 cycles, used here for cycle alignment on 4: 895+13=908
+        adc hl, bc
+        ;xor a
 frame   di
-        ld (stack), sp
+        ld (stack), sp          ; 20T
 
-
-        ld sp, raster_script
-        pop hl
-        pop de
-        pop bc
-        inc sp
-        inc sp
-        push bc
-        push de
-        push hl
-        push bc
-
- irp pattern, <border_pattern_a, border_pattern_b, attribute_pattern_a, attribute_pattern_b>
+ irp pattern, <attribute_pattern_a, attribute_pattern_b>
         ld sp, &pattern
         pop hl
         pop de
         pop bc
-        inc sp
-        push bc
-        push de
-        push hl
-        ld a,b
-        ld (&pattern),a
         exx
  endm
 
-
-
-SCROLLX defl 0
-        comment ##############
-if SCROLLX == 0
-        ld b, COLOR_A << 3
-        ld c, COLOR_A << 3
-        ld d, COLOR_B << 3
-        ld e, COLOR_B << 3
-        ld h, COLOR_B << 3
-        ld l, COLOR_A << 3
-        exx
-        ld b', COLOR_B << 3
-        ld c', COLOR_B << 3
-        ld d', COLOR_A << 3
-        ld e', COLOR_A << 3
-        ld h', COLOR_A << 3
-        ld l', COLOR_B << 3
-        exx
-endif
-if SCROLLX == 1
-        ld b, COLOR_A << 3
-        ld c, COLOR_B << 3
-        ld d, COLOR_B << 3
-        ld e, COLOR_B << 3
-        ld h, COLOR_A << 3
-        ld l, COLOR_A << 3
-        exx
-        ld b', COLOR_B << 3
-        ld c', COLOR_A << 3
-        ld d', COLOR_A << 3
-        ld e', COLOR_A << 3
-        ld h', COLOR_B << 3
-        ld l', COLOR_B << 3
-        exx
-endif
-if SCROLLX == 2
-        ld b, COLOR_B << 3
-        ld c, COLOR_B << 3
-        ld d, COLOR_B << 3
-        ld e, COLOR_A << 3
-        ld h, COLOR_A << 3
-        ld l, COLOR_A << 3
-        exx
-        ld b', COLOR_A << 3
-        ld c', COLOR_A << 3
-        ld d', COLOR_A << 3
-        ld e', COLOR_B << 3
-        ld h', COLOR_B << 3
-        ld l', COLOR_B << 3
-        exx
-endif
-###########
-        ld sp, $5800+32*24
+        ld sp, $5800+32*24      ; 10T
  rept 8
   rept 3
    rept 5
@@ -121,8 +66,8 @@ endif
   endm
         exx
  endm
-        ld h, 2;0;COLOR_A
-        ld l, 6;7;COLOR_B
+        ;ld h, 2;0;COLOR_A
+        ;ld l, 6;7;COLOR_B
         ld a, (border_pattern_a)
         ld l, a
         ld a, (border_pattern_b)
@@ -131,9 +76,7 @@ endif
         ld bc, PORT
         out (c),a
 
-CONTENDED_CYCLE_COUNT defl 912;         ; initialize with the number of wasted cycles since the start of the frame
-                                        ; TODO: I found this number empirically and verified it with Fuse
-                                        ; investigate, if due to keyboard processing in ROM interrupt taking that much time?
+CONTENDED_CYCLE_COUNT defl INTERRUPT_CYCLE_COUNT
 WAIT_CYCLES macro cycles
  cycles_to_wait = (cycles)
  if cycles_to_wait%4!=0 && cycles_to_wait%2==0 && cycles_to_wait>=6
@@ -161,8 +104,8 @@ WAIT_PIXEL macro x, cycles_to_output
         WAIT_CYCLES (x)/2-(cycles_to_output)-(((t($)-(t(frame)+CONTENDED_CYCLE_COUNT)))%224)
 endm
 
-START_RASTER_SCRIPT macro raster_script_label
-        ld sp, raster_script_label
+START_RASTER_SCRIPT macro raster_script
+        ld sp, raster_script
 endm
 
 NEXT_RASTER_SCRIPT_ENTREE macro
@@ -200,7 +143,7 @@ endm
         out (c),a
         ;14360          ; 16 cycles
         ;out (c),0
-        jp screen_loop
+        jp main_loop
         ###################
 
         ;comment ###################
@@ -208,6 +151,7 @@ endm
         START_RASTER_SCRIPT ix ; raster_script_0+SCROLLX*(raster_script_1-raster_script_0)
         WAIT_RASTER -24, -(24+12+16-4) ; 8908T
         NEXT_RASTER_SCRIPT_ENTREE    ; -> 8924T , (1st out finishes) 8936,8948,8960 
+        jp end_raster_script
 
 ;_0:     WAIT_RASTER 0, -(24+12)
 ;        NEXT_RASTER_SCRIPT_ENTREE
@@ -292,7 +236,7 @@ bottom_border______________________
  endm
 ###################################
 
-        jp screen_loop
+        jp main_loop
 
 
 ALTERNATE_BORDER_N_TIMES macro times, reg_with_color_a, reg_with_color_b
@@ -350,7 +294,35 @@ screen_line_hl_0 CHECKERS_SCREEN_LINE screen_line_hl_0, h, l, 0
 screen_line_hl_1 CHECKERS_SCREEN_LINE screen_line_hl_1, h, l, 1
 screen_line_hl_2 CHECKERS_SCREEN_LINE screen_line_hl_2, h, l, 2
 
+update_scroll_patterns_and_jump_to_main_loop
+        ld sp, raster_script
+        pop hl
+        pop de
+        pop bc
+        inc sp
+        inc sp
+        push bc
+        push de
+        push hl
+        push bc
+
+ irp pattern, <border_pattern_a, border_pattern_b, attribute_pattern_a, attribute_pattern_b>
+        ld sp, &pattern
+        pop hl
+        pop de
+        pop bc
+        inc sp
+        push bc
+        push de
+        push hl
+        ld a,b
+        ld (&pattern),a
+        exx
+ endm
+        jp main_loop
+
 stack   dw 0
+counter db PAUSE_N_FRAMES
 border_pattern_a
         db COLOR_A
         db COLOR_A
@@ -368,18 +340,18 @@ border_pattern_b
         db COLOR_A
         db 0
 attribute_pattern_a
+        db COLOR_B << 3
+        db COLOR_B << 3
+        db COLOR_B << 3
         db COLOR_A << 3
-        db COLOR_B << 3
-        db COLOR_B << 3
-        db COLOR_B << 3
         db COLOR_A << 3
         db COLOR_A << 3
         db 0
 attribute_pattern_b
+        db COLOR_A << 3
+        db COLOR_A << 3
+        db COLOR_A << 3
         db COLOR_B << 3
-        db COLOR_A << 3
-        db COLOR_A << 3
-        db COLOR_A << 3
         db COLOR_B << 3
         db COLOR_B << 3
         db 0
@@ -389,10 +361,10 @@ raster_script
         dw raster_script_0
         dw 0
 raster_script_0
-        rept 1
+        rept 12
                 dw border_line_lh_0
         endm
-        rept 23
+        rept 12
                 dw border_line_hl_0
         endm
         rept 4
@@ -403,18 +375,18 @@ raster_script_0
                 dw screen_line_hl_0
         endm
         endm
-        rept 23
+        rept 12
                 dw border_line_lh_0
         endm
-        rept 1
+        rept 12
                 dw border_line_hl_0
         endm
-        dw screen_loop
+        dw end_raster_script
 raster_script_1
-        rept 1
+        rept 12
                 dw border_line_lh_1
         endm
-        rept 23
+        rept 12
                 dw border_line_hl_1
         endm
         rept 4
@@ -425,18 +397,18 @@ raster_script_1
                 dw screen_line_hl_1
         endm
         endm
-        rept 23
+        rept 12
                 dw border_line_lh_1
         endm
-        rept 1
+        rept 12
                 dw border_line_hl_1
         endm
-        dw screen_loop
+        dw end_raster_script
 raster_script_2
-        rept 1
+        rept 12
                 dw border_line_lh_2
         endm
-        rept 23
+        rept 12
                 dw border_line_hl_2
         endm
         rept 4
@@ -447,12 +419,65 @@ raster_script_2
                 dw screen_line_hl_2
         endm
         endm
-        rept 23
+        rept 12
                 dw border_line_lh_2
         endm
-        rept 1
+        rept 12
                 dw border_line_hl_2
         endm
-        dw screen_loop
+        dw end_raster_script
+
+end_raster_script                       ; 62688T
+if 0
+        ld a, (counter)                 ; 13
+        dec a                           ; 4
+        ld (counter), a                 ; 13
+        jnz align_main_loopA            ; 10 -> 40
+        ld a, PAUSE_N_FRAMES            ; 7
+        ld (counter), a                 ; 13 -> 60
+else
+        ld hl, counter                  ; 10
+        dec (hl)                        ; 11
+        jnz align_main_loopB            ; 10
+        ld a, PAUSE_N_FRAMES            ; 7
+        ld a, PAUSE_N_FRAMES            ; 7
+        ld (hl), a                      ; 7  -> 52
+        nop
+        nop 
+endif
+        ld hl, counter
+        jp update_scroll_patterns_and_jump_to_main_loop
+
+align_main_loopA
+        ld hl, counter                  ; 10
+        jp main_loop
+
+align_main_loopB                        ; 31
+        ld a, PAUSE_N_FRAMES
+        ld a, PAUSE_N_FRAMES
+        ld a, PAUSE_N_FRAMES
+        nop
+        nop
+        jp main_loop
+
+interrupt_______________________________
+setup_interrupt_mode2
+        di
+        ld a, high interrupt_vector_table
+        ld i, a
+        im 2
+        ei
+        ret
+
+        org $FDFD
+im2_handler
+        ei
+        reti
+im2_handler_end
+        assert(im2_handler_end <= $FE00)
+
+        org $FE00
+interrupt_vector_table
+        dc 257, high im2_handler
 
         end start               ; entry point for zmac and pasmo

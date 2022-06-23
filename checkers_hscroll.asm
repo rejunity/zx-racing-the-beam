@@ -13,17 +13,89 @@
 BRIGHT  equ 0 ; 8 for bright
 COLOR_A equ (2+BRIGHT)
 COLOR_B equ (6+BRIGHT)
-PAUSE_N_FRAMES equ 1
+PAUSE_N_FRAMES equ 2
 
-CLOBBER_REGPAIR_BY_WAIT equ de
 PORCH   equ 64
 PORT    equ $FE
+
+
+WAIT_ODD_CYCLES macro add_cycles, ?dummy_jump
+ ; TODO: opption for clobbering flags, but shorter instructions
+ ;        ld a, i         ; waste 9T, alters flags!
+ ;        dec de          ; waste 6T, alters flags!
+ if nul &add_cycles
+  odd = t($)%4
+ else
+  odd = (t($)+(add_cycles))%4
+ endif
+ if odd==3
+        ld a, (0)       ; waste 13T,    odd(3)+13=16%4=0
+ endif
+ if odd==2
+        jmp ?dummy_jump ; waste 10T,    odd(2)+10=12%4=0
+  ?dummy_jump:
+ endif
+ if odd==1
+        ld a, 1         ; waste 7T,     odd(1)+7=8%4=0
+ endif
+ ;assert (t($)+(add_cycles))%4==0
+endm
+
+WAIT_CYCLES macro cycles, ?dummy_jump
+ assert ((cycles) >= 4 || (cycles) == 0)
+ tstate_after_wait = t($)+(cycles)
+ odd = (cycles)%4
+ if odd==1
+        ld a, (0)       ; waste 13T
+ endif
+ if (cycles)%4==2
+        jmp ?dummy_jump ; waste 10T
+  ?dummy_jump:
+ endif
+ if (cycles)%4==3
+        ld a, 1         ; waste 7T
+ endif
+ cycles_left_to_wait = tstate_after_wait-t($)
+ assert cycles_left_to_wait>=0
+ assert cycles_left_to_wait%4==0
+ rept cycles_left_to_wait/4
+        nop
+ endm
+ assert t($)==tstate_after_wait
+endm
+
+WAIT_TO_ALIGN_ON_4_CYCLES macro label, jump_cycles
+        ;WAIT_CYCLES (32+4-((t($)-t(label)+jump_cycles)%4))
+        ;WAIT_ODD_CYCLES (t($)-t(label)+jump_cycles)
+        WAIT_ODD_CYCLES (-t(label)+jump_cycles)
+endm
+
+WAIT_TO_ALIGN_CODEBLOCK_ON_4_CYCLES macro to_label, from_label, jump_cycles
+        ;block_cycles=(cycles) ; t(to_label)-t(from_label)
+        ;WAIT_CYCLES (32+4-block_cycles%4)
+        ;WAIT_ODD_CYCLES cycles
+        ;if to_label==$
+;                WAIT_ODD_CYCLES (jump_cycles-t(from_label))
+                ;WAIT_TO_ALIGN_ON_4_CYCLES from_label, jump_cycles
+        ;else
+                WAIT_CYCLES 32+4-(t(to_label)-t(from_label)+jump_cycles)%4
+        ;endif
+endm
+
+WAIT_ODD_CYCLES_FOLLOWED_BY_JUMP macro
+        WAIT_ODD_CYCLES 10
+endm
+WAIT_ODD_CYCLES_FOLLOWED_BY_UNCONDITIONAL_RET macro
+        WAIT_ODD_CYCLES 10
+endm
 
         org $8000
 start:
 init____________________________________________________________________________
-        ld (stack), sp
         call setup_interrupt_mode2
+        ld (stack), sp
+        WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2
+                                ; is 4 cycles aligned
 
 animate_________________________________________________________________________
 animate_scroll_patterns:
@@ -51,16 +123,19 @@ animate_scroll_patterns:
         ld (&pattern),a
         exx
  endm
+anim_copy = t($)-t(animate_scroll_patterns)
+        WAIT_ODD_CYCLES
 
 keep_scroll_patterns:
-
 render_frame____________________________________________________________________
         ld sp, (stack)
         ei
+keep_copy = t($)-t(keep_scroll_patterns)
+        WAIT_ODD_CYCLES
         halt            ; 39 cycles passes since the start of the frame,
                         ; our custom empty im2_handler executes and
                         ; CPU finishes HALT instruction
-INTERRUPT_CYCLE_COUNT = 39
+INTERRUPT_CYCLE_COUNT = 37
 frame   di
 
         ld (stack), sp
@@ -92,36 +167,6 @@ frame   di
         xor a
         ld bc, PORT
         out (c),a
-
-WAIT_CYCLES macro cycles, ?dummy_jump
- cycles_to_wait = (cycles)
- ;assert (cycles_to_wait >= 4)
- if cycles_to_wait%4==1 && cycles_to_wait>=9
-        ld a, i         ; waste 9T
-        cycles_to_wait-=9
- endif
- if cycles_to_wait%4==3 && cycles_to_wait>=7
-        ld a, 1         ; waste 7T
-        cycles_to_wait-=7
- endif
- ifdef CLOBBER_REGPAIR_BY_WAIT
-  if cycles_to_wait%2==0 && cycles_to_wait%4!=0 && cycles_to_wait>=6
-        dec CLOBBER_REGPAIR_BY_WAIT
-                        ; waste 6T
-        cycles_to_wait-=6
-  endif
- else
-  if cycles_to_wait%2==0 && cycles_to_wait%4!=0 && cycles_to_wait>=10
-        jmp ?dummy_jump ; waste 10T
-  ?dummy_jump:
-        cycles_to_wait-=10
-  endif
- endif
- assert cycles_to_wait%4==0
- rept cycles_to_wait/4
-        nop
- endm
-endm
 
 CONTENDED_CYCLE_COUNT = INTERRUPT_CYCLE_COUNT
 WAIT_SCANLINE macro line, cycles_offset
@@ -239,34 +284,84 @@ raster_script_&scroll_x:                ; defines: raster_script_0,
         dw finish_raster_script
  endm
 
-finish_raster_script:                   ; 62688T (~280 scanlines=64+192+24)
-if 0
+finish_raster_script:                   ; 62688T = 280 scanlines (64+192+24)
+                                        ;         -32T raster offset
+        sett 62688      
+
+        ;comment #############
+if 1
         ld a, (counter)                 ; 13T
         dec a                           ; 4T
         ld (counter), a                 ; 13T
-        jnz align_main_loopA            ; 10T - 40T -> 60T
-        ld a, PAUSE_N_FRAMES            ; 7T
-        ld (counter), a                 ; 13T -> 60T
+        jz reset_counter                ; 10T
 else
         ld hl, counter                  ; 10T
         dec (hl)                        ; 11T
-        jnz align_main_loopB            ; 10T - (31T) -> 52T
-        ld a, PAUSE_N_FRAMES            ; 7T
-        ld a, PAUSE_N_FRAMES            ; 7T
-        ld (hl), a                      ; 7T  -> 52T
+        jz reset_counter                ; 10T
 endif
+continue:
+        WAIT_ODD_CYCLES 10
+        jp keep_scroll_patterns
+
+reset_counter
+        sett t(continue)
+        ld a, PAUSE_N_FRAMES
+        ld (counter), a
+        WAIT_ODD_CYCLES 10
         jp animate_scroll_patterns
 
-align_main_loopA                        ; 40T
-        ld hl, counter                  ; 10T
-        ld hl, counter                  ; 10T -> 60T
-        jp keep_scroll_patterns
+;###############
 
-align_main_loopB                        ; -> 31T
-        ld a, PAUSE_N_FRAMES            ; 7T
-        ld a, PAUSE_N_FRAMES            ; 7T
-        ld a, PAUSE_N_FRAMES            ; 7T -> 52T
+        comment #############
+if 0
+        ld a, (counter)
+        dec a
+        ld (counter), a
+        jnz continue \ _continue:
+        ld a, PAUSE_N_FRAMES
+        ld (counter), a
+        WAIT_ODD_CYCLES 10
+        jp animate_scroll_patterns
+
+else
+        ld hl, counter
+        dec (hl)
+        jnz continue \ _continue:
+        ld a, PAUSE_N_FRAMES
+        ld (hl), a
+        WAIT_ODD_CYCLES 10
+        jp animate_scroll_patterns
+endif
+
+continue:
+        sett t(_continue)
+        WAIT_ODD_CYCLES 10
         jp keep_scroll_patterns
+############
+
+        comment #############
+if 1
+        ld a, (counter)
+        dec a
+        ld (counter), a
+        WAIT_ODD_CYCLES 10      ; followed by JNZ, additional 10T
+        jnz keep_scroll_patterns
+        ld a, PAUSE_N_FRAMES
+        ld (counter), a
+        WAIT_ODD_CYCLES 10      ; followed by JP, additional 10T
+        jp animate_scroll_patterns
+
+else
+        ld hl, counter
+        dec (hl)
+        WAIT_ODD_CYCLES 10      ; followed by JNZ, additional 10T
+        jnz keep_scroll_patterns
+        ld a, PAUSE_N_FRAMES
+        ld (hl), a
+        WAIT_ODD_CYCLES 10      ; followed by JP, additional 10T
+        jp animate_scroll_patterns
+endif
+############
 
 data____________________________________________________________________________
 stack   dw 0
@@ -316,6 +411,7 @@ setup_interrupt_mode2:
         ld i, a
         im 2
         ei
+        WAIT_ODD_CYCLES 10      ; followed by uncondintional RET, additional 10T
         ret
 
         org $FDFD

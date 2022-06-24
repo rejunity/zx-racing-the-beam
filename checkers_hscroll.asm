@@ -57,9 +57,6 @@ endm
         org $8000
 start:
 init____________________________________________________________________________
-        jp $+3
-        JP NEXT
-NEXT:
         call setup_interrupt_mode2
         ld (stack), sp
         WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2

@@ -88,14 +88,12 @@ animate_scroll_patterns:
         ld (&pattern),a
         exx
  endm
-anim_copy = t($)-t(animate_scroll_patterns)
         WAIT_ODD_CYCLES
 
 keep_scroll_patterns:
 render_frame____________________________________________________________________
         ld sp, (stack)
         ei
-keep_copy = t($)-t(keep_scroll_patterns)
         WAIT_ODD_CYCLES
         halt            ; 39 cycles passes since the start of the frame,
                         ; our custom empty im2_handler executes and
@@ -251,82 +249,32 @@ raster_script_&scroll_x:                ; defines: raster_script_0,
 
 finish_raster_script:                   ; 62688T = 280 scanlines (64+192+24)
                                         ;         -32T raster offset
-        sett 62688      
+        sett 62688
 
-        ;comment #############
 if 1
-        ld a, (counter)                 ; 13T
-        dec a                           ; 4T
-        ld (counter), a                 ; 13T
-        jz reset_counter                ; 10T
-else
-        ld hl, counter                  ; 10T
-        dec (hl)                        ; 11T
-        jz reset_counter                ; 10T
-endif
-continue:
-        WAIT_ODD_CYCLES 10
-        jp keep_scroll_patterns
-
-reset_counter
-        sett t(continue)
+        ld hl, counter
+        dec (hl)
+        WAIT_ODD_CYCLES 10              ; followed by JNZ, additional 10T
+        jnz keep_scroll_patterns
         ld a, PAUSE_N_FRAMES
-        ld (counter), a
-        WAIT_ODD_CYCLES 10
+        ld (hl), a
+        WAIT_ODD_CYCLES 10              ; followed by JP, additional 10T
         jp animate_scroll_patterns
-
-;###############
-
-        comment #############
-if 0
-        ld a, (counter)
-        dec a
-        ld (counter), a
-        jnz continue \ _continue:
-        ld a, PAUSE_N_FRAMES
-        ld (counter), a
-        WAIT_ODD_CYCLES 10
-        jp animate_scroll_patterns
-
 else
         ld hl, counter
         dec (hl)
         jnz continue \ _continue:
         ld a, PAUSE_N_FRAMES
         ld (hl), a
-        WAIT_ODD_CYCLES 10
+        WAIT_ODD_CYCLES 10              ; followed by JP, additional 10T
         jp animate_scroll_patterns
+continue: sett t(_continue)             ; restart T state counting from the
+                                        ; origin of the incoming jump
+        WAIT_ODD_CYCLES 10
+        jp keep_scroll_patterns         ; followed by JP, additional 10T
+
 endif
 
-continue:
-        sett t(_continue)
-        WAIT_ODD_CYCLES 10
-        jp keep_scroll_patterns
-############
-
-        comment #############
-if 1
-        ld a, (counter)
-        dec a
-        ld (counter), a
-        WAIT_ODD_CYCLES 10      ; followed by JNZ, additional 10T
-        jnz keep_scroll_patterns
-        ld a, PAUSE_N_FRAMES
-        ld (counter), a
-        WAIT_ODD_CYCLES 10      ; followed by JP, additional 10T
-        jp animate_scroll_patterns
-
-else
-        ld hl, counter
-        dec (hl)
-        WAIT_ODD_CYCLES 10      ; followed by JNZ, additional 10T
-        jnz keep_scroll_patterns
-        ld a, PAUSE_N_FRAMES
-        ld (hl), a
-        WAIT_ODD_CYCLES 10      ; followed by JP, additional 10T
-        jp animate_scroll_patterns
-endif
-############
 
 data____________________________________________________________________________
 stack   dw 0

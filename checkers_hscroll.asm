@@ -58,6 +58,7 @@ endm
 start:
 init____________________________________________________________________________
         call setup_interrupt_mode2
+        halt
         ld (stack), sp
         WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2
                                 ; is 4 cycles aligned
@@ -95,11 +96,11 @@ render_frame____________________________________________________________________
         ld sp, (stack)
         ei
         WAIT_ODD_CYCLES
-        halt            ; 39 cycles passes since the start of the frame,
+        halt            ; 37 cycles passes since the start of the frame,
                         ; our custom empty im2_handler executes and
                         ; CPU finishes HALT instruction
-INTERRUPT_CYCLE_COUNT = 37
-frame   di
+        sett 37         ; set T state to 37 cycles
+        di
 
         ld (stack), sp
  irp pattern, <attribute_pattern_a, attribute_pattern_b>
@@ -131,13 +132,13 @@ frame   di
         ld bc, PORT
         out (c),a
 
-CONTENDED_CYCLE_COUNT = INTERRUPT_CYCLE_COUNT
+CONTENDED_CYCLE_COUNT = 0
 WAIT_FOR_SCANLINE macro line, cycles_offset
-        WAIT_CYCLES 224*(PORCH+line)+(cycles_offset)-CONTENDED_CYCLE_COUNT-(t($)-t(frame))+4
+        WAIT_CYCLES 224*(PORCH+line)+(cycles_offset)-CONTENDED_CYCLE_COUNT-t($)+4
 endm
 
 WAIT_FOR_PIXEL macro x, cycles_to_output
-        WAIT_CYCLES (x)/2-(cycles_to_output)-(((t($)-(t(frame)+CONTENDED_CYCLE_COUNT)))%224)
+        WAIT_CYCLES (x)/2-(cycles_to_output)-(((t($)-CONTENDED_CYCLE_COUNT))%224)
 endm
 
 NEXT_RASTER_SCRIPT_ENTREE macro

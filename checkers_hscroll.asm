@@ -18,43 +18,33 @@ PAUSE_N_FRAMES equ 2
 PORCH   equ 64
 PORT    equ $FE
 
-
-WAIT_ODD_CYCLES macro add_cycles, ?dummy_jump
+ALIGN_WAIT_INSTRUCTION macro odd
  ; TODO: opption for clobbering flags, but shorter instructions
  ;        ld a, i         ; waste 9T, alters flags!
  ;        dec de          ; waste 6T, alters flags!
- if nul &add_cycles
-  odd = t($)%4
- else
-  odd = (t($)+(add_cycles))%4
+ if &odd==3 \ ld a, (0)         ; waste 13T,    odd(3)+13=16%4=0
  endif
- if odd==3
-        ld a, (0)       ; waste 13T,    odd(3)+13=16%4=0
+ if &odd==2 \ jp $+3            ; waste 10T,    odd(2)+10=12%4=0
  endif
- if odd==2
-        jmp ?dummy_jump ; waste 10T,    odd(2)+10=12%4=0
-  ?dummy_jump:
+ if &odd==1 \ ld a, 1           ; waste 7T,     odd(1)+7=8%4=0
  endif
- if odd==1
-        ld a, 1         ; waste 7T,     odd(1)+7=8%4=0
- endif
- ;assert (t($)+(add_cycles))%4==0
 endm
 
-WAIT_CYCLES macro cycles, ?dummy_jump
- assert ((cycles) >= 4 || (cycles) == 0)
+WAIT_ODD_CYCLES macro extra_cycles
+ if nul &extra_cycles
+        ALIGN_WAIT_INSTRUCTION t($)%4
+        assert t($)%4==0
+ else
+        ALIGN_WAIT_INSTRUCTION (t($)+(extra_cycles))%4
+        assert (t($)+(extra_cycles))%4==0
+ endif
+endm
+
+WAIT_CYCLES macro cycles
+ assert (cycles >= 4 || cycles == 0)
  tstate_after_wait = t($)+(cycles)
- odd = (cycles)%4
- if odd==1
-        ld a, (0)       ; waste 13T
- endif
- if (cycles)%4==2
-        jmp ?dummy_jump ; waste 10T
-  ?dummy_jump:
- endif
- if (cycles)%4==3
-        ld a, 1         ; waste 7T
- endif
+        ALIGN_WAIT_INSTRUCTION 4-(cycles)%4
+
  cycles_left_to_wait = tstate_after_wait-t($)
  assert cycles_left_to_wait>=0
  assert cycles_left_to_wait%4==0
@@ -64,34 +54,12 @@ WAIT_CYCLES macro cycles, ?dummy_jump
  assert t($)==tstate_after_wait
 endm
 
-WAIT_TO_ALIGN_ON_4_CYCLES macro label, jump_cycles
-        ;WAIT_CYCLES (32+4-((t($)-t(label)+jump_cycles)%4))
-        ;WAIT_ODD_CYCLES (t($)-t(label)+jump_cycles)
-        WAIT_ODD_CYCLES (-t(label)+jump_cycles)
-endm
-
-WAIT_TO_ALIGN_CODEBLOCK_ON_4_CYCLES macro to_label, from_label, jump_cycles
-        ;block_cycles=(cycles) ; t(to_label)-t(from_label)
-        ;WAIT_CYCLES (32+4-block_cycles%4)
-        ;WAIT_ODD_CYCLES cycles
-        ;if to_label==$
-;                WAIT_ODD_CYCLES (jump_cycles-t(from_label))
-                ;WAIT_TO_ALIGN_ON_4_CYCLES from_label, jump_cycles
-        ;else
-                WAIT_CYCLES 32+4-(t(to_label)-t(from_label)+jump_cycles)%4
-        ;endif
-endm
-
-WAIT_ODD_CYCLES_FOLLOWED_BY_JUMP macro
-        WAIT_ODD_CYCLES 10
-endm
-WAIT_ODD_CYCLES_FOLLOWED_BY_UNCONDITIONAL_RET macro
-        WAIT_ODD_CYCLES 10
-endm
-
         org $8000
 start:
 init____________________________________________________________________________
+        jp $+3
+        JP NEXT
+NEXT:
         call setup_interrupt_mode2
         ld (stack), sp
         WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2
@@ -169,11 +137,11 @@ frame   di
         out (c),a
 
 CONTENDED_CYCLE_COUNT = INTERRUPT_CYCLE_COUNT
-WAIT_SCANLINE macro line, cycles_offset
+WAIT_FOR_SCANLINE macro line, cycles_offset
         WAIT_CYCLES 224*(PORCH+line)+(cycles_offset)-CONTENDED_CYCLE_COUNT-(t($)-t(frame))+4
 endm
 
-WAIT_PIXEL macro x, cycles_to_output
+WAIT_FOR_PIXEL macro x, cycles_to_output
         WAIT_CYCLES (x)/2-(cycles_to_output)-(((t($)-(t(frame)+CONTENDED_CYCLE_COUNT)))%224)
 endm
 
@@ -184,7 +152,7 @@ endm
 
 START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, cycles_offset
         ld sp, raster_script_jump_table
-        WAIT_SCANLINE (scanline), ((cycles_offset)-16)
+        WAIT_FOR_SCANLINE (scanline), ((cycles_offset)-16)
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
@@ -197,7 +165,7 @@ END_RASTER_SCRIPT_ENTREE macro label
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
-WAIT_PIXEL_IN_RASTER_SCRIPT macro label, x
+WAIT_FOR_PIXEL_IN_RASTER_SCRIPT macro label, x
         WAIT_CYCLES (x)/2-(-24)-((t($)-t(label)+(CONTENDED_CYCLE_COUNT-CONTENDED_CYCLE_COUNT_AT_THE_BEGINNING_OF_THE_ENTREE))%224)
 endm
 
@@ -211,7 +179,7 @@ endm
 CHECKERS_BORDER_LINE macro reg_with_color_a, reg_with_color_b, scroll_x, ?this
 ?this:
 BEGIN_RASTER_SCRIPT_ENTREE
-        WAIT_PIXEL_IN_RASTER_SCRIPT ?this, -48+8*scroll_x
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, -48+8*scroll_x
  ifdef DEBUG
         ; visualize the 1st and the last checker on the line
         ALTERNATE_BORDER_N_TIMES 1, 0, 0
@@ -226,12 +194,12 @@ endm
 CHECKERS_SCREEN_LINE macro reg_with_color_a, reg_with_color_b, scroll_x, ?this
 ?this:
 BEGIN_RASTER_SCRIPT_ENTREE
-        WAIT_PIXEL_IN_RASTER_SCRIPT ?this, -48+8*scroll_x
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, -48+8*scroll_x
         out (c), reg_with_color_a       ; border change #1
         out (c), reg_with_color_b       ; border change #2
 
         ; color change "under" the pixels
-        WAIT_PIXEL_IN_RASTER_SCRIPT ?this, 128
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, 128
  ifdef DEBUG
         out (c), 0
  else
@@ -240,7 +208,7 @@ BEGIN_RASTER_SCRIPT_ENTREE
 
         CONTENDED_CYCLE_COUNT += 4      ; the last OUT "under" pixels is contended and
                                         ; wastes 4 cycles waiting for ULA
-        WAIT_PIXEL_IN_RASTER_SCRIPT ?this, 24*11+8*scroll_x
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, 24*11+8*scroll_x
         out (c), reg_with_color_b       ; border change #3
         out (c), reg_with_color_a       ; border change #4
 END_RASTER_SCRIPT_ENTREE ?this

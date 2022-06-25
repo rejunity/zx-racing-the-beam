@@ -132,13 +132,16 @@ render_frame____________________________________________________________________
         ld bc, PORT
         out (c),a
 
-CONTENDED_CYCLE_COUNT = 0
+CONTENDED_CYCLES macro cycles
+        sett t($)+cycles
+endm
+
 WAIT_FOR_SCANLINE macro line, pixel_x, cycles_to_output
-        WAIT_CYCLES 224*(PORCH+line)+(pixel_x)/2-(cycles_to_output)-CONTENDED_CYCLE_COUNT-t($)+4
+        WAIT_CYCLES 224*(PORCH+line)+(pixel_x)/2-(cycles_to_output)-t($)+4
 endm
 
 WAIT_FOR_PIXEL macro x, cycles_to_output
-        WAIT_CYCLES (x)/2-(cycles_to_output)-(((t($)-CONTENDED_CYCLE_COUNT))%224)
+        WAIT_CYCLES (x)/2-(cycles_to_output)-(t($)%224)
 endm
 
 NEXT_RASTER_SCRIPT_ENTREE macro
@@ -152,17 +155,15 @@ START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, pixe
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
-CONTENDED_CYCLE_COUNT_AT_THE_BEGINNING_OF_THE_ENTREE = 0
 BEGIN_RASTER_SCRIPT_ENTREE macro
-        CONTENDED_CYCLE_COUNT_AT_THE_BEGINNING_OF_THE_ENTREE = CONTENDED_CYCLE_COUNT
 endm
 END_RASTER_SCRIPT_ENTREE macro label
-        WAIT_CYCLES 224-((t($)-t(label)+(CONTENDED_CYCLE_COUNT-CONTENDED_CYCLE_COUNT_AT_THE_BEGINNING_OF_THE_ENTREE))%224)-16
+        WAIT_CYCLES 224-((t($)-t(label))%224)-16
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
 WAIT_FOR_PIXEL_IN_RASTER_SCRIPT macro label, x
-        WAIT_CYCLES (x)/2-(-24)-((t($)-t(label)+(CONTENDED_CYCLE_COUNT-CONTENDED_CYCLE_COUNT_AT_THE_BEGINNING_OF_THE_ENTREE))%224)
+        WAIT_CYCLES (x)/2-(-24)-((t($)-t(label))%224)
 endm
 
 ALTERNATE_BORDER_N_TIMES macro times, reg_with_color_a, reg_with_color_b
@@ -195,6 +196,11 @@ BEGIN_RASTER_SCRIPT_ENTREE
         out (c), reg_with_color_b       ; border change #2
 
         ; color change "under" the pixels
+        ; it doesn't matter at what time during the drawing of the pixels ("under" the pixels)
+        ; this border change will occur as long as it occurs early enough,
+        ; however it is IMPORTANT that change occurs at a consistent point during the scanline,
+        ; so that amount of contended cycles stays the same regardless of the scroll_x value
+        ; thus I picked pixel 128
         WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, 128
  ifdef DEBUG
         out (c), 0
@@ -202,7 +208,7 @@ BEGIN_RASTER_SCRIPT_ENTREE
         out (c), reg_with_color_a
  endif
 
-        CONTENDED_CYCLE_COUNT += 4      ; the last OUT "under" pixels is contended and
+        CONTENDED_CYCLES 4              ; the last OUT "under" pixels is contended and
                                         ; wastes 4 cycles waiting for ULA
         WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, 24*11+8*scroll_x
         out (c), reg_with_color_b       ; border change #3

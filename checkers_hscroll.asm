@@ -133,8 +133,8 @@ render_frame____________________________________________________________________
         out (c),a
 
 CONTENDED_CYCLE_COUNT = 0
-WAIT_FOR_SCANLINE macro line, cycles_offset
-        WAIT_CYCLES 224*(PORCH+line)+(cycles_offset)-CONTENDED_CYCLE_COUNT-t($)+4
+WAIT_FOR_SCANLINE macro line, pixel_x, cycles_to_output
+        WAIT_CYCLES 224*(PORCH+line)+(pixel_x)/2-(cycles_to_output)-CONTENDED_CYCLE_COUNT-t($)+4
 endm
 
 WAIT_FOR_PIXEL macro x, cycles_to_output
@@ -146,9 +146,9 @@ NEXT_RASTER_SCRIPT_ENTREE macro
         ret             ; 10 cycles
 endm
 
-START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, cycles_offset
+START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, pixel_x
         ld sp, raster_script_jump_table
-        WAIT_FOR_SCANLINE (scanline), ((cycles_offset)-16)
+        WAIT_FOR_SCANLINE (scanline), pixel_x, 16
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
@@ -213,7 +213,7 @@ endm
 
 start_raster_script_____________________________________________________________
         ld ix, (raster_script)
-        START_RASTER_SCRIPT_FROM_SCANLINE ix, -24, -(24+12)
+        START_RASTER_SCRIPT_FROM_SCANLINE ix, -24, -(48+24)
 
  irpc scroll_x, 012                     ; 3 scroll "positions"
                                         ; each step by 8 pixels

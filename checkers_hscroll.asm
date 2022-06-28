@@ -9,17 +9,17 @@
 ; 4) After an interrupt occurs, 64 line times (14336 T states; see below for exact timings) pass before the first byte of the screen (16384) is displayed. At least the last 48 of these are actual border-lines; the others may be either border or vertical retrace.
 ; 5) A frame is (64+192+56)*224=69888 T states (3.5MHz/69888=50.08 Hz interrupt)
 
-;DEBUG   equ 0
-BRIGHT  equ 0 ; 8 for bright
+;DEBUG   equ 1
+BRIGHT  equ 0   ; 8 for bright
 COLOR_A equ (2+BRIGHT)
 COLOR_B equ (6+BRIGHT)
 PAUSE_N_FRAMES equ 2
 
-PORCH   equ 64
-PORT    equ $FE
+PORCH   equ 64  ; number of scanlines between interrupt and the top of the screen
+PORT    equ $FE ; ULA port
 
 ALIGN_WAIT_INSTRUCTION macro odd
- ; TODO: opption for clobbering flags, but shorter instructions
+ ; TODO: opption for clobbering flags, but with shorter instructions
  ;        ld a, i         ; waste 9T, alters flags!
  ;        dec de          ; waste 6T, alters flags!
  if &odd==3 \ ld a, (0)         ; waste 13T,    odd(3)+13=16%4=0
@@ -60,7 +60,7 @@ init____________________________________________________________________________
         call setup_interrupt_mode2
         halt
         ld (stack), sp
-        WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2
+        WAIT_ODD_CYCLES         ; assumes that setup_interrupt_mode2 body
                                 ; is 4 cycles aligned
 
 animate_________________________________________________________________________
@@ -144,26 +144,29 @@ WAIT_FOR_PIXEL macro x, cycles_to_output
         WAIT_CYCLES (x)/2-(cycles_to_output)-(t($)%224)
 endm
 
+CYCLES_TO_JUMP_NEXT_RASTER_SCRIPT_ENTREE = 10
 NEXT_RASTER_SCRIPT_ENTREE macro
-        dec de          ; 6 cycles, just to align the following "RET" on 4 cycles
-        ret             ; 10 cycles
+        ret             ; 10 cycles ==> CYCLES_TO_JUMP_NEXT_RASTER_SCRIPT_ENTREE
 endm
 
-START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, pixel_x
+RASTER_SCRIPT_SCANLINE_START_IN_PIXELS = 0
+START_RASTER_SCRIPT_FROM_SCANLINE macro raster_script_jump_table, scanline, pixel_x, cycles_to_output, ?check
         ld sp, raster_script_jump_table
-        WAIT_FOR_SCANLINE (scanline), pixel_x, 16
-        NEXT_RASTER_SCRIPT_ENTREE
+        RASTER_SCRIPT_SCANLINE_START_IN_PIXELS = pixel_x
+        WAIT_FOR_SCANLINE scanline, pixel_x, (CYCLES_TO_JUMP_NEXT_RASTER_SCRIPT_ENTREE+cycles_to_output)
+?check: NEXT_RASTER_SCRIPT_ENTREE
+        assert t($)-t(?check)==CYCLES_TO_JUMP_NEXT_RASTER_SCRIPT_ENTREE
 endm
 
 BEGIN_RASTER_SCRIPT_ENTREE macro
 endm
 END_RASTER_SCRIPT_ENTREE macro label
-        WAIT_CYCLES 224-((t($)-t(label))%224)-16
+        WAIT_CYCLES 224-((t($)-t(label))%224)-CYCLES_TO_JUMP_NEXT_RASTER_SCRIPT_ENTREE
         NEXT_RASTER_SCRIPT_ENTREE
 endm
 
-WAIT_FOR_PIXEL_IN_RASTER_SCRIPT macro label, x
-        WAIT_CYCLES (x)/2-(-24)-((t($)-t(label))%224)
+WAIT_FOR_PIXEL_IN_RASTER_SCRIPT macro label, pixel_x
+        WAIT_CYCLES ((pixel_x)-RASTER_SCRIPT_SCANLINE_START_IN_PIXELS)/2-((t($)-t(label))%224)
 endm
 
 ALTERNATE_BORDER_N_TIMES macro times, reg_with_color_a, reg_with_color_b
@@ -178,10 +181,15 @@ CHECKERS_BORDER_LINE macro reg_with_color_a, reg_with_color_b, scroll_x, ?this
 BEGIN_RASTER_SCRIPT_ENTREE
         WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, -48+8*scroll_x
  ifdef DEBUG
-        ; visualize the 1st and the last checker on the line
+        ; visualize the 1st and 8th (the last) checker on the line
+        ; put one checker exactly in the middle, not moving
         ALTERNATE_BORDER_N_TIMES 1, 0, 0
-        ALTERNATE_BORDER_N_TIMES 6, reg_with_color_a, reg_with_color_b
+        ALTERNATE_BORDER_N_TIMES 2, reg_with_color_a, reg_with_color_b
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, 128
         ALTERNATE_BORDER_N_TIMES 1, 0, reg_with_color_b
+        WAIT_FOR_PIXEL_IN_RASTER_SCRIPT ?this, -48+48*5+8*scroll_x
+        ALTERNATE_BORDER_N_TIMES 2, reg_with_color_a, reg_with_color_b
+        ALTERNATE_BORDER_N_TIMES 1, 0, 0
  else
         ALTERNATE_BORDER_N_TIMES 8, reg_with_color_a, reg_with_color_b
  endif
@@ -218,8 +226,11 @@ END_RASTER_SCRIPT_ENTREE ?this
 endm
 
 start_raster_script_____________________________________________________________
-        ld ix, (raster_script)
-        START_RASTER_SCRIPT_FROM_SCANLINE ix, -24, -(48+24)
+        ld ix, (raster_script)          ; start raster script
+        START_RASTER_SCRIPT_FROM_SCANLINE ix, -24, -48, 12
+                                        ; 24 scanlines into the top border and
+                                        ; 48 pixels into into the left border
+                                        ; 12 cycles (OUT instruction) to write data
 
  irpc scroll_x, 012                     ; 3 scroll "positions"
                                         ; each step by 8 pixels
@@ -338,7 +349,7 @@ setup_interrupt_mode2:
 im2_handler:
         ei
         reti
-im2_handler_end:
+im2_handler_end:                ; check handler does not overrun the vector table
         assert(im2_handler_end <= $FE00)
 
         org $FE00

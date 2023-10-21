@@ -1,4 +1,13 @@
-8bitworkshop
+ZX 48/128 Experiments
 =====
 
-[Open this project in 8bitworkshop](http://8bitworkshop.com/redir.html?platform=zx&githubURL=https%3A%2F%2Fgithub.com%2Frejunity%2F8bitworkshop&file=colors.asm).
+This repo contains set of experiments **racing the beam** and **opening the border** on ZX Spectrum 48K.
+ - racing the beam, allows for multicolour effects that defy 8x8 color attributes
+ - opening the border, allows to draw outside of the normal video memory area
+<p align="center" width="100%">
+    <img width="33%" src="./screenshots/checkers.png">
+</p>
+
+
+
+## How to build

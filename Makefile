@@ -3,7 +3,7 @@ AS=tools/zmac
 EMU=open tools/Fuse.app
 
 # targets
-TAPES=clear.tap screen.tap vscroll.tap checkers.tap checkers_hscroll.tap colors.tap colors2.tap
+TAPES=clear.tap screen.tap vscroll.tap checkers.tap checkers_hscroll.tap interrupt_mode2.tap colors.tap colors2.tap
 
 # rules
 .PHONY: all clean

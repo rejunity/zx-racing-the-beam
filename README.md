@@ -18,9 +18,9 @@ Tools for Mac OSX are included directly in the repository and should not require
 - Emulator: [Fuse](https://fuse-emulator.sourceforge.net), [Fuse for Mac OSX](https://fuse-for-macosx.sourceforge.io)
 - Assembler: [zmac](http://48k.ca/zmac.html)
 
-## What next
+# What next?
 
-First run `checkers` that draws on the border. Executing for the following commmand will compile `checkers.asm` file, produce `checkers.tap` tape file and execute the emulator.
+First run `checkers` example. Executing the following will compile `checkers.asm` file, build `checkers.tap` tape file and execute the emulator:
 
 ```make checkers```
 
@@ -35,7 +35,7 @@ Finally look at `checkers_hscroll.asm` which willl draw animated checkerboard ac
 This code races the beam and deals with [memory contention](https://sinclair.wiki.zxnet.co.uk/wiki/Contended_memory).
 (**HELP NEEDED**: *Update code to run with 128K timing*)
 
-See if you could re-implement it with less code or make it more readable?
+See, if you could re-implement it with the less code or make it more readable?
 
 ### Setting up Build & Run in Sublime Text 
 

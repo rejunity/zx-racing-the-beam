@@ -24,13 +24,19 @@ First run `checkers` example. Executing the following will compile `checkers.asm
 
 ```make checkers```
 
+![checkers.tap](./screenshots/checkers.png)
+
 Next look at `interrupt_mode2.asm`. It provides predictable frame timing and explains at which cycle exactly frame starts.
 
 ```make interrupt_mode2```
 
+![interrup_mode2.tap](./screenshots/interrupt_mode2.gif)
+
 Finally look at `checkers_hscroll.asm` which willl draw animated checkerboard across the whole screen including border.
 
 ```make checkers_hscroll```
+
+![checkers_hscroll.tap](./screenshots/checkers_hscroll.gif)
 
 This code races the beam and deals with [memory contention](https://sinclair.wiki.zxnet.co.uk/wiki/Contended_memory).
 (**HELP NEEDED**: *Update code to run with 128K timing*)

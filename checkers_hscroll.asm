@@ -1,6 +1,9 @@
 ; ZX48K horizontally scrolling checkers on the border
 ; zmac checkers_hscroll.asm -o checkers_hscroll.tap
 
+; Capture video in Fuse | File > Movie Recording > Record ...
+; tools/fmfconv -f 25 ../screenshots/checkers_hscroll.fmf --avi checkers_hscroll.avi -y
+
 ; SEE: https://worldofspectrum.org/faq/reference/48kreference.htm#Hardware
 ; 1) Each line takes exactly 224 T states = 128 T (screen) + 96 T (border&retrace)
 ; 2) Every half T state a pixel is written to the CRT, so if the ULA is reading bytes it does so each 4 T states (and then it reads two: a screen and an ATTR byte).

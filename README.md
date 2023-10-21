@@ -27,12 +27,13 @@ First run `checkers` example. Executing the following will compile `checkers.asm
 ![checkers.tap](./screenshots/checkers.png)
 
 Next look at `interrupt_mode2.asm`. It provides predictable frame timing and explains at which cycle exactly frame starts.
+Nothing particularly interesting happens visually just border is changing every N frames. Look at the code instead.
 
 ```make interrupt_mode2```
 
 ![interrup_mode2.tap](./screenshots/interrupt_mode2.gif)
 
-Finally look at `checkers_hscroll.asm` which willl draw animated checkerboard across the whole screen including border.
+Finally look at `checkers_hscroll.asm` which willl draw animated checkerboard across the whole screen including the border.
 
 ```make checkers_hscroll```
 

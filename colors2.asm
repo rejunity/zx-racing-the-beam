@@ -2,7 +2,7 @@
 ; https://worldofspectrum.org/forums/discussion/comment/768319#Comment_768319
 ; https://worldofspectrum.org/forums/discussion/38591/redirect/p1
 ; 64x48 multicolor in demo - https://www.pouet.net/prod.php?which=62802
-PORCH   equ 64-3
+PORCH   equ 64 ; number of scanlines between interrupt and the top of the screen
 
         org  0x5ccb
         jmp  0x8000

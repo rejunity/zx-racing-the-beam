@@ -1,8 +1,7 @@
-; ZX48K multicolor 64x48
+; ZX48K multicolor 64x48 (WIP unfinished, not working properly yet)
 ; zmac colors.asm -o colors.tap
 
-
-PORCH   equ 64-3
+PORCH   equ 64 ; number of scanlines between interrupt and the top of the screen
 
         org  0x8000
 

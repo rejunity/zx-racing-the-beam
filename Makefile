@@ -6,7 +6,13 @@ EMU=open tools/Fuse.app
 ZX?=48 # 48K by default
 
 # targets
-TAPES=clear.tap screen.tap vscroll.tap checkers.tap checkers_hscroll.tap interrupt_mode2.tap colors.tap colors2.tap
+TAPES+=clear.tap
+TAPES+=screen.tap
+TAPES+=vscroll.tap
+TAPES+=checkers.tap checkers_hscroll.tap
+TAPES+=interrupt_mode2.tap
+TAPES+=colors.tap
+TAPES+=colors2.tap
 
 # rules
 .PHONY: all clean

@@ -18,7 +18,6 @@ Tools for Mac OSX are included directly in the repository and should not require
 - Emulator: [Fuse](https://fuse-emulator.sourceforge.net), [Fuse for Mac OSX](https://fuse-for-macosx.sourceforge.io)
 - Assembler: [zmac](http://48k.ca/zmac.html)
 
-
 ## What next
 
 First run `checkers` that draws on the border. Executing for the following commmand will compile `checkers.asm` file, produce `checkers.tap` tape file and execute the emulator.
@@ -37,6 +36,23 @@ This code races the beam and deals with [memory contention](https://sinclair.wik
 (**HELP NEEDED**: *Update code to run with 128K timing*)
 
 See if you could re-implement it with less code or make it more readable?
+
+### Setting up Build & Run in Sublime Text 
+
+1) Open your **Sublime Text** editor and chose Tools ▶ Build System ▶ New Build System…
+2) Copy contents of the [ZXasm.sublime-build](ZXasm.sublime-build) into newly create sublime-build script, save with `ZXasm.sublime-build` name.
+3) Pick any `.asm` file in the project, chose Tools ▶ Build System and specify `ZXasm`.
+Now you can use Command+B (or Ctrl+B) to build & launch emulator!
+
+For more information see [Sublime build system docs](https://www.sublimetext.com/docs/build_systems.html)
+
+### Adding new .asm file 
+
+1) Create new `my_new_experiment.asm`
+2) Add to [Makefile](Makefile): `TAPES+=my_new_experiment.tap`
+3) Now you can use:
+
+```make my_new_experiment```
 
 
 ## TODO

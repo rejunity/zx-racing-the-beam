@@ -1,16 +1,19 @@
 ; ZX48K checkers on the border
 ; zmac checkers.asm -o checkers.tap
 
-; https://worldofspectrum.org/faq/reference/48kreference.htm
+; SEE: https://worldofspectrum.org/faq/reference/48kreference.htm#Hardware
 ; 1) Each line takes exactly 224 T states = 128 T (screen) + 96 T (border&retrace)
 ; 2) Every half T state a pixel is written to the CRT, so if the ULA is reading bytes it does so each 4 T states (and then it reads two: a screen and an ATTR byte).
 ; 3) The border is 48 pixels wide at each side. A video screen line is therefore timed as follows:
 ;    128 T states of screen, 24 T states of right border, 48 T states of horizontal retrace and 24 T states of left border.
 ; 4) After an interrupt occurs, 64 line times (14336 T states; see below for exact timings) pass before the first byte of the screen (16384) is displayed. At least the last 48 of these are actual border-lines; the others may be either border or vertical retrace.
 ; 5) A frame is (64+192+56)*224=69888 T states (3.5MHz/69888=50.08 Hz interrupt)
+;
+; NOTE: because we have not installed interrupt handler, pressing any button will screw up the timing
+; and break the border rendering. We are going to address this in interrupt_mode2.asm and checkers_hscroll.asm
 
-PORCH   equ 64
-PORT    equ $fe
+PORCH   equ 64 ; number of scanlines between interrupt and the top of the screen
+PORT    equ $FE ; ULA port
 COLOR_A equ 1
 COLOR_B equ 6
 

@@ -1,8 +1,8 @@
 ; ZX48K interrupt mode 2
 ; zmac interrupt_mode2.asm -o interrupt_mode2.tap
 
-; The code below installs empty interrupt handler
-; and it is useful to measure and understand the exact timing of the interrupt!
+; The code below installs an empty interrupt handler.
+; This code is useful to measure and understand the exact timing of the interrupt!
 ; 
 ; NOTE: there is as an inherent 4T variability of the HALT instruction because
 ; HALT instruction is implmented in Z80 CPU as a busy wait loop that runs NOP.

@@ -1,4 +1,4 @@
-; ZX multicolor based on Nirvana+ loop
+; ZX multicolor based on Nirvana+ loop (WIP unfinished, not working properly yet)
 ; https://worldofspectrum.org/forums/discussion/comment/768319#Comment_768319
 ; https://worldofspectrum.org/forums/discussion/38591/redirect/p1
 ; 64x48 multicolor in demo - https://www.pouet.net/prod.php?which=62802

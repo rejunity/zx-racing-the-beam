@@ -63,3 +63,16 @@ For more information see [Sublime build system docs](https://www.sublimetext.com
 - Implement 64x48 multicolour by flipping between screen pages on 128K.
 - AY at 200Mhz
 - Investigate if custom code generator (say with Python) instead of zmac would simplify cycle exact code genereation
+
+
+## Useful information
+### Hardware
+- ZX Spectrum 48K Hardware overview: [https://worldofspectrum.org/faq/reference/48kreference.htm](https://worldofspectrum.org/faq/reference/48kreference.htm#Hardware)
+- Different Spectrum Models: https://spectrumforeveryone.com/technical/zx-spectrum-models/
+- ULA types: https://spectrumforeveryone.com/technical/zx-spectrum-ula-types/
+- ZX Spectrum schematics and PCB layouts: https://spectrumforeveryone.com/technical/zx-spectrum-pcb-schematics-layout/
+### Timing
+- ZX Spectrum 48K frame timing: https://worldofspectrum.org/faq/reference/48kreference.htm#ZXSpectrum
+- It is very important to understand Memory Contention, 48K model: https://worldofspectrum.org/faq/reference/48kreference.htm#Contention
+- ZX Spectrum 128K memory banks, frame and contention timing: https://worldofspectrum.org/faq/reference/128kreference.htm
+- Z80 Instruction cycles, sizes and opcodes: https://spectrumforeveryone.com/technical/z80-processor-instructions/

@@ -2,6 +2,9 @@
 AS=tools/zmac
 EMU=open tools/Fuse.app
 
+# type of ZX to emulate
+ZX?=48 # 48K by default
+
 # targets
 TAPES=clear.tap screen.tap vscroll.tap checkers.tap checkers_hscroll.tap interrupt_mode2.tap colors.tap colors2.tap
 
@@ -18,4 +21,4 @@ clean:
 
 # run tape with emu
 %: %.tap
-	$(EMU) $^
+	$(EMU) $^ --args --machine $(ZX)

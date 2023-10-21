@@ -1,5 +1,5 @@
-; ZX48K checkers on the border
-; zmac checkers.asm -o checkers.tap
+; ZX48K horizontally scrolling checkers on the border
+; zmac checkers_hscroll.asm -o checkers_hscroll.tap
 
 ; https://worldofspectrum.org/faq/reference/48kreference.htm
 ; 1) Each line takes exactly 224 T states = 128 T (screen) + 96 T (border&retrace)

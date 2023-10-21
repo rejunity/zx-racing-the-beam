@@ -27,4 +27,4 @@ clean:
 
 # run tape with emu
 %: %.tap
-	$(EMU) $^ --args --machine $(ZX)
+	$(EMU) $^ --args --machine $(ZX) --no-confirm-actions

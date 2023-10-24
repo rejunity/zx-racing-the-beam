@@ -28,7 +28,7 @@ Executing `make screen_timing` will compile `screen_timing.asm` file, build `scr
 
 ![screen_timing.tap](./screenshots/screen_timing.png)
 
-Look at [screen_timing.asm](.screen_timing.asm) source code. It will explain frame timing for ZX Spectrum 48K and demonstrate how to catch TV beam at a desired position.
+Look at [screen_timing.asm](./screen_timing.asm) source code. It will explain frame timing for ZX Spectrum 48K and demonstrate how to catch TV beam at a desired position.
 
 Next look at [interrupt_mode2.asm](./interrupt_mode2.asm). It provides predictable frame timing and explains at which cycle exactly frame starts.
 Nothing particularly interesting happens visually just border is changing every N frames. Look at the code instead.

@@ -11,6 +11,8 @@ TAPES+=interrupt_mode2.tap
 TAPES+=raster.tap
 TAPES+=checkers.tap checkers_hscroll.tap
 
+TAPES+=ay200hz.tap
+
 TAPES+=vscroll.tap
 TAPES+=clear.tap
 TAPES+=screen.tap

@@ -8,7 +8,7 @@ This repo contains set of experiments for **racing the beam** and **opening the 
 Both techniques require precise cycle timing which is complicated on ZX Spectrum 48/128K due to [memory contention](https://sinclair.wiki.zxnet.co.uk/wiki/Contended_memory).
 
 <p align="center" width="100%">
-    <img width="33%" src="./screenshots/checkers_red.png">
+    <img width="33%" src="./screenshots/checkers_hscroll.gif">
 </p>
 
 ## Prerequistes and tools
@@ -20,15 +20,17 @@ Tools for Mac OSX are included directly in the repository and should not require
 
 # What next?
 
-First run `screen_timing` example. Executing the following will compile `screen_timing.asm` file, build `screen_timing.tap` tape file and execute the emulator:
+First run `screen_timing` example that demonstrates exact frame timing and how to draw on the border at a particular position.
+
+Executing `make screen_timing` will compile `screen_timing.asm` file, build `screen_timing.tap` tape file and execute the emulator:
 
 ```make screen_timing```
 
 ![screen_timing.tap](./screenshots/screen_timing.png)
 
-Look at [screen_timing.asm](./screenshots/screen_timing.asm) source code. It will explain frame timing for ZX Spectrum 48K and demonstrate how to catch TV beam at a desired position.
+Look at [screen_timing.asm](.screen_timing.asm) source code. It will explain frame timing for ZX Spectrum 48K and demonstrate how to catch TV beam at a desired position.
 
-Next look at [interrupt_mode2.asm](./screenshots/interrupt_mode2.asm). It provides predictable frame timing and explains at which cycle exactly frame starts.
+Next look at [interrupt_mode2.asm](./interrupt_mode2.asm). It provides predictable frame timing and explains at which cycle exactly frame starts.
 Nothing particularly interesting happens visually just border is changing every N frames. Look at the code instead.
 
 ```make interrupt_mode2```

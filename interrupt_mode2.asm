@@ -25,7 +25,42 @@
 ; 37T + 0..3T (37/38/39/40T) cycles after the ULA timer interrupt has occured.
 ;              ^^^^^^^^^^^^
 ;
-; NOTE: A frame is (64+192+56)*224=69888 T states (3.5MHz/69888=50.08 Hz interrupt)
+; NOTE: ULA interrupt does NOT happen on the start of the scanline,
+; but rather 16 T cycles later, directly above the first pixel.
+;
+; (*) marks the timing of ULA interrupts in relation to the screen:
+; 
+;            <------------------------ 224T ------------------------>    |
+;            16->|<------------ 128T -----------><16><16><----48---->____v_
+;   ^        ....*VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV______
+;   |   ^    llllttttttttttttttttttttttttttttttttrrrrHHHH............    ^
+;   |   |    llllttttttttttttttttttttttttttttttttrrrrHHHH............    |
+;   |   |    llllttttttttttttttttttttttttttttttttrrrrHHHH............    8 scanlines of VSYNC
+;   |   56   llllttttttttttttttttttttttttttttttttrrrrHHHH............     & vertical blanking
+;   |   |    llllttttttttttttttttttttttttttttttttrrrrHHHH............
+;   |   |    llllttttttttttttttttttttttttttttttttrrrrHHHH............   LEGEND:
+;   |   v    llllttttttttttttttttttttttttttttttttrrrrHHHH............    * - ULA interrupt!
+;   |   ^    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............    . - blanking / horizontal retrace
+;   |   |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............    V - VSync pulse & vertical retrace
+;   |   |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............    H - HSync pulse
+;  312  |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............    l - border on the (l)eft
+;   |   |                                                                r - border on the (r)ight
+;   |  192 scanlines            ...                                      t - border on the (t)op
+;   |   |                                                                b - border on the (b)ottom
+;   |   |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............    X - pixel screen
+;   |   |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............
+;   |   |    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............
+;   |   v    llllXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXrrrrHHHH............
+;   |   ^    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............         The whole frame is:
+;   |   |    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............   (8+56+192+56)*224=69888 T states
+;   |   |    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............   (3.5MHz/69888=50.08 Hz interrupt)
+;   |   56   llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............
+;   |   |    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............
+;   |   |    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............
+;   v   v    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............
+;            ....* next frame
+;
+; See screen_timing.asm for more info!
 
         org $8000
 start:

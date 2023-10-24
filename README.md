@@ -20,18 +20,26 @@ Tools for Mac OSX are included directly in the repository and should not require
 
 # What next?
 
-First run `checkers` example. Executing the following will compile `checkers.asm` file, build `checkers.tap` tape file and execute the emulator:
+First run `screen_timing` example. Executing the following will compile `screen_timing.asm` file, build `screen_timing.tap` tape file and execute the emulator:
 
-```make checkers```
+```make screen_timing```
 
-![checkers.tap](./screenshots/checkers.png)
+![screen_timing.tap](./screenshots/screen_timing.png)
 
-Next look at `interrupt_mode2.asm`. It provides predictable frame timing and explains at which cycle exactly frame starts.
+Look at [screen_timing.asm](./screenshots/screen_timing.asm) source code. It will explain frame timing for ZX Spectrum 48K and demonstrate how to catch TV beam at a desired position.
+
+Next look at [interrupt_mode2.asm](./screenshots/interrupt_mode2.asm). It provides predictable frame timing and explains at which cycle exactly frame starts.
 Nothing particularly interesting happens visually just border is changing every N frames. Look at the code instead.
 
 ```make interrupt_mode2```
 
 ![interrup_mode2.tap](./screenshots/interrupt_mode2.gif)
+
+Next run `checkers` example that draws static image on the border:
+
+```make checkers```
+
+![checkers.tap](./screenshots/checkers.png)
 
 Finally look at `checkers_hscroll.asm` which willl draw animated checkerboard across the whole screen including the border.
 

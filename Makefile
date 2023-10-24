@@ -6,11 +6,16 @@ EMU=open tools/Fuse.app
 ZX?=48 # 48K by default
 
 # targets
+TAPES+=screen_timing.tap
+TAPES+=interrupt_mode2.tap
+TAPES+=raster.tap
+TAPES+=checkers.tap checkers_hscroll.tap
+
+TAPES+=vscroll.tap
 TAPES+=clear.tap
 TAPES+=screen.tap
-TAPES+=vscroll.tap
-TAPES+=checkers.tap checkers_hscroll.tap
-TAPES+=interrupt_mode2.tap
+
+TAPES+=zebra.tap
 TAPES+=colors.tap
 TAPES+=colors2.tap
 

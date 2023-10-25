@@ -1,37 +1,44 @@
 # tools
 AS=tools/zmac
 EMU=open tools/Fuse.app
+BUILD_DIR=build
 
 # type of ZX to emulate
 ZX?=48 # 48K by default
 
 # targets
-TAPES+=screen_timing.tap
-TAPES+=interrupt_mode2.tap
-TAPES+=raster.tap
-TAPES+=checkers.tap checkers_hscroll.tap
+ASMS+=screen_timing.asm
+ASMS+=interrupt_mode2.asm
+ASMS+=raster.asm
+ASMS+=checkers.asm checkers_hscroll.asm
 
-TAPES+=ay200hz.tap
+ASMS+=ay200hz.asm
 
-TAPES+=vscroll.tap
-TAPES+=clear.tap
-TAPES+=screen.tap
+ASMS+=vscroll.asm
+ASMS+=clear.asm
+ASMS+=screen.asm
 
-TAPES+=zebra.tap
-TAPES+=colors.tap
-TAPES+=colors2.tap
+ASMS+=zebra.asm
+ASMS+=colors.asm
+ASMS+=colors2.asm
+
+TAPES=$(patsubst %.asm,%.tap,$(ASMS))
+BUILD_TAPES=$(TAPES:%=$(BUILD_DIR)/%)
 
 # rules
 .PHONY: all clean
-all: $(TAPES)
+all: $(BUILD_TAPES)
 
 clean:
-	rm -f $(TAPES)
+	@rm -f $(BUILD_TAPES)
+	@rmdir build
 
 # compile asm to tape
-%.tap: %.asm
+$(BUILD_DIR)/%.tap: %.asm
+	mkdir -p $(dir $@)
 	$(AS) $< -o $@
 
 # run tape with emu
-%: %.tap
-	$(EMU) $^ --args --machine $(ZX) --no-confirm-actions
+$(BUILD_DIR)/%: $(BUILD_DIR)/%.tap
+	$(EMU) $< --args --machine $(if $(findstring .128,$<),128,$(ZX)) --no-confirm-actions
+

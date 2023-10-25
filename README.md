@@ -8,7 +8,7 @@ This repo contains set of experiments for **racing the beam** and **opening the 
 Both techniques require precise cycle timing which is complicated on ZX Spectrum 48/128K due to [memory contention](https://sinclair.wiki.zxnet.co.uk/wiki/Contended_memory).
 
 <p align="center" width="100%">
-    <img width="33%" src="./screenshots/checkers_hscroll.gif">
+    <img src="./screenshots/checkers_hscroll.gif">
 </p>
 
 ## Prerequistes and tools

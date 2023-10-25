@@ -8,10 +8,10 @@
 ;  3) scanline 156 = 156-63= 93th screen scanline
 ;  4) scanline 234 = 156-63=171th screen scanline
 ; We can also reduce number of "music" scanlines overlapping the screen
-; for performance reasons with offset of 192-170 = 22
+; for performance reasons with offset of 192-171 = 21
 
 OFFSET  equ 0
-;OFFSET  equ 22
+;OFFSET  equ 21
 
 UPDATE_AY macro
 ; TODO: implemnet AY music routine
@@ -53,13 +53,13 @@ main_loop:
         endif
         UPDATE_AY
         BORDER 1
-        WAIT_RASTER 14+OFFSET
+        WAIT_RASTER 15+OFFSET
         UPDATE_AY
         BORDER 2
-        WAIT_RASTER 92+OFFSET
+        WAIT_RASTER 93+OFFSET
         UPDATE_AY
         BORDER 6
-        WAIT_RASTER 170+OFFSET
+        WAIT_RASTER 171+OFFSET
         UPDATE_AY
         BORDER 4
 
@@ -87,4 +87,3 @@ interrupt_vector_table
 
 entry_point_____________________________________________________________________
         end start               ; entry point for zmac and pasmo
-

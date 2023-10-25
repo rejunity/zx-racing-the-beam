@@ -86,4 +86,4 @@ interrupt_vector_table
 
 entry_point_____________________________________________________________________
         end start               ; entry point for zmac and pasmo
-w
+

@@ -8,6 +8,7 @@ ZX?=48 # 48K by default
 
 # targets
 ASMS+=screen_timing.asm
+ASMS+=screen_timing.128k.asm
 ASMS+=interrupt_mode2.asm
 ASMS+=raster.asm
 ASMS+=checkers.asm checkers_hscroll.asm

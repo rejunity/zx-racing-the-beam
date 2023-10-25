@@ -1,4 +1,4 @@
 {
     "selector": "source.asm",
-    "cmd": ["make", "$file_base_name"]
+    "cmd": ["make", "build/$file_base_name"]
 }

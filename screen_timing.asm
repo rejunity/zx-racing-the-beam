@@ -48,6 +48,8 @@
 ;   v   v    llllbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbrrrrHHHH............
 ;            ....* next frame
 ;
+; SEE: https://worldofspectrum.org/faq/reference/48kreference.htm#ZXSpectrum
+;
 ; So to reach the scanline above the first pixel we need to wait
 ;    8 + 56 - 1 = 63 scanlines to pass after ULA interrupt.
 ; Therefore, we have to wait for 63 * 224T = 14112T cycles
@@ -58,7 +60,7 @@
 ; 2) We align T cycles from odd 37 to 44 to divisible by 4 for simplicity
 ;    LD A,0 instruction takes 7 T cycles, 37 + 7 = 44T
 ; 3) We add enough NOP instructions to wait:
-;    14112T - 44T (interrupt handler time) - 24T (time takes to change the border color)
+;    14112T - 44T (interrupt handler time /w alignment) - 20T (time takes to change the border color)
 ; 4) We use ZMAC's t($) to get T cycle count since the interrupt at a given adress.
 ;    $ - means current address
 ;
@@ -82,7 +84,7 @@ BORDER macro color      ; Helper macro to set BORDER color
         out (ULA),a     ;+ 11T cycles
                         ;-----------
 endm                    ;= 24T cycles
-BORDER_T equ 24
+BORDER_T equ 24 - 4     ; HYPOTHESIS: actual data is being sent on the 7th cycle of OUT, 4T cycles before OUT finishes
 
         org $8000
 main____________________________________________________________________________
@@ -96,17 +98,17 @@ main_loop:
         sett 37         ; Set zmac assembler internal T state to 37 cycles
                         ; we have to specify T here explicitly because
                         ; zmac have no way to know how long interrupt has taken. 
-        ld a, 0         ; Wait 7 cycles until 44 cycles to aling for division by 4 (see NOP_T)
+        ld a, 0         ; Wait 7 cycles until 44 cycles to align for division by 4 (see NOP_T)
                         ; NOTE: see interrupt_mode2.asm for more info!
 
- rept (LINE_T*63 - BORDER_T - t($)) / NOP_T + 1 ; t($) zmac assembler internal T state counter
+ rept (LINE_T*63 - BORDER_T - t($)) / NOP_T     ; t($) zmac assembler internal T state counter
         nop                                     ; t($) returns how many T cycles passed up until
  endm                                           ; the current instruction
         BORDER BLUE
 
         ; bonus, change border back exactly one line after
         ; the last pixel (bottom-right corner)
- rept (LINE_T*(64+192) + 128 - BORDER_T - t($)) / NOP_T + 1
+ rept (LINE_T*(64+192) + 128 - BORDER_T - t($)) / NOP_T
         nop
  endm
         BORDER WHITE
